@@ -1,0 +1,153 @@
+plugins {
+    id 'signing'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.jetbrains.dokka' version '1.4.32'
+    id 'net.minecrell.licenser' version '0.4.1'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
+}
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding 'UTF-8'
+
+group 'me.dkim19375'
+version '1.0-SNAPSHOT'
+
+//noinspection GrUnresolvedAccess
+compileKotlin.kotlinOptions {
+    languageVersion = "1.5"
+    jvmTarget = '1.8'
+}
+
+compileTestKotlin.kotlinOptions {
+    languageVersion = "1.5"
+    jvmTarget = '1.8'
+}
+
+license {
+    header = rootProject.file("LICENSE")
+    include "**/*.kt"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://m2.dv8tion.net/releases' }
+    maven { url = 'https://repo.mattstudios.me/artifactory/public' }
+}
+
+dependencies {
+    compileOnly 'commons-io:commons-io:2.8.0'
+    compileOnly 'org.apache.commons:commons-lang3:3.12.0'
+    compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.0'
+
+    testImplementation 'commons-io:commons-io:2.8.0'
+    testImplementation 'org.apache.commons:commons-lang3:3.12.0'
+    testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
+
+    // testing libs
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+task javadocJar(type: Jar) {
+    from dokkaJavadoc
+    classifier 'javadoc'
+}
+
+publishing {
+    def project = project
+    publications {
+        //noinspection GroovyAssignabilityCheck
+        mavenJava(MavenPublication) {
+            //noinspection GroovyAssignabilityCheck
+            groupId 'io.github.dkim19375'
+            //noinspection GroovyAssignabilityCheck
+            artifactId 'dkimcore'
+            version project.version
+
+            //noinspection GroovyAssignabilityCheck
+            from components.kotlin
+            //noinspection GroovyAssignabilityCheck
+            artifact sourcesJar
+            //noinspection GroovyAssignabilityCheck
+            artifact javadocJar
+
+            pom {
+                //noinspection GroovyAssignabilityCheck
+                name = 'DkimCore'
+                //noinspection GroovyAssignabilityCheck
+                description = 'A library for some utilities made in kotlin!'
+                //noinspection GroovyAssignabilityCheck
+                url = 'https://github.com/dkim19375/DkimCore'
+
+                //noinspection GroovyAssignabilityCheck
+                packaging = 'jar'
+
+                licenses {
+                    license {
+                        //noinspection GroovyAssignabilityCheck
+                        name = 'MIT License'
+                        //noinspection GroovyAssignabilityCheck
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        //noinspection GroovyAssignabilityCheck
+                        id = 'dkim19375'
+                    }
+                }
+
+                scm {
+                    //noinspection GroovyAssignabilityCheck
+                    connection = 'scm:git:git://github.com/dkim19375/dkim19375JDAUtils.git'
+                    //noinspection GroovyAssignabilityCheck
+                    developerConnection = 'scm:git:ssh://github.com:dkim19375/dkim19375JDAUtils.git'
+                    //noinspection GroovyAssignabilityCheck
+                    url = 'https://github.com/dkim19375/dkim19375JDAUtils'
+                }
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    packageGroup.set("io.github.dkim19375")
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            username = project.findProperty("mavenUsername")
+            password = project.findProperty("mavenPassword")
+        }
+    }
+}
+
+signing {
+/*    def keyId = findProperty("signingKeyId")
+    def key = findProperty("signingKey")
+    def pass = findProperty("signingPassword")
+    useInMemoryPgpKeys(keyId, key, pass)*/
+    sign publishing.publications.mavenJava
+}
+
+tasks.jar.dependsOn licenseFormat
