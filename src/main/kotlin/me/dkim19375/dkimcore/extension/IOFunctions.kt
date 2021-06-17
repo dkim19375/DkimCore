@@ -49,6 +49,9 @@ fun Path.createFileAndDirs() {
 
 @API
 fun String.toFile(): File {
+    runCatchingOrNull { File(this) }?.run {
+        return this
+    }
     val array = replace("\\", "/").split("/").toTypedArray()
     val first = array.getOrElse(0) { "" }
     val rest = array.drop(1)
