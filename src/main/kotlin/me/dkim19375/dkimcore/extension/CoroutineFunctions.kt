@@ -35,6 +35,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 val SCOPE: CoroutineScope = CoroutineScope(Dispatchers.Default)
+val IO_SCOPE: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
 @API
 suspend fun <T> await(

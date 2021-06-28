@@ -22,39 +22,26 @@
  * SOFTWARE.
  */
 
-package me.dkim19375.dkimcore.coroutine
+package me.dkim19375.dkimcore.file
 
-import kotlin.system.measureTimeMillis
-import kotlin.test.*
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.extension.createFileAndDirs
+import me.dkim19375.dkimcore.extension.toPath
+import java.io.File
+import java.nio.file.Path
 
-internal class ActionConsumerTest {
-    @Test
-    fun `Test time of queue`() {
-        val max = 500L
-        val time = measureTimeMillis {
-            ActionConsumer { Thread.sleep(300L) }.queue()
-        }
-        assertTrue(max > time)
+abstract class DataFile(@API val fileName: String) {
+    @API
+    val path: Path = fileName.toPath()
+    @API
+    val file: File
+        get() = path.toFile()
+
+    open fun reload() {
+        path.createFileAndDirs()
     }
 
-    @Test
-    fun `Test time of complete`() {
-        val max = 100L
-        val time = measureTimeMillis {
-            ActionConsumer { Thread.sleep(300L) }.complete()
-        }
-        assertTrue(max < time)
-    }
-
-    @Test
-    fun `Test time of submit`() {
-        val max = 100L
-        val time = measureTimeMillis {
-            ActionConsumer consumer@{
-                Thread.sleep(300L)
-                return@consumer true
-            }.submit().get()
-        }
-        assertTrue(max < time)
+    open fun save() {
+        path.createFileAndDirs()
     }
 }

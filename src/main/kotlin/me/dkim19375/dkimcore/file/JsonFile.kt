@@ -24,31 +24,61 @@
 
 package me.dkim19375.dkimcore.file
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import me.dkim19375.dkimcore.annotation.API
-import me.mattstudios.config.SettingsHolder
-import me.mattstudios.config.SettingsManager
-import me.mattstudios.config.properties.Property
+import me.dkim19375.dkimcore.extension.createFileAndDirs
+import java.lang.reflect.Type
+import kotlin.io.path.reader
+import kotlin.io.path.writer
+import kotlin.reflect.KClass
 
-@API
-open class YamlFile(@API val properties: SettingsHolder, fileName: String) : DataFile(fileName) {
-    @API
-    val manager: SettingsManager = SettingsManager.from(file).configurationData(properties.javaClass).create()
+class JsonFile<T : Any>(
+    private val type: KClass<T>,
+    fileName: String,
+    prettyPrinting: Boolean = true,
+    typeAdapters: Map<Type, Any> = emptyMap(),
+    @API val gson: Gson = GsonBuilder()
+        .apply {
+            if (prettyPrinting) {
+                setPrettyPrinting()
+            }
+            typeAdapters.forEach(this::registerTypeAdapter)
+        }.create()
+) : DataFile(fileName) {
 
-    @API
-    fun <T : Any> get(property: Property<T>): T = manager.get(property)
+    private var current: T
 
-    @API
-    fun <T : Any> set(property: Property<T>, value: T) = manager.set(property, value)
-
-    @API
-    override fun reload() {
-        super.reload()
-        manager.reload()
+    init {
+        path.createFileAndDirs()
+        current = gson.fromJson(path.reader(), type.java) ?: run {
+            val new = type.java.newInstance()
+            set(new)
+            save()
+            new
+        }
     }
 
-    @API
+    fun get(): T = current
+
+    fun set(obj: T) {
+        current = obj
+    }
+
+    override fun reload() {
+        super.reload()
+        current = gson.fromJson(path.reader(), type.java) ?: run {
+            val new = type.java.newInstance()
+            set(new)
+            save()
+            new
+        }
+    }
+
     override fun save() {
         super.save()
-        manager.save()
+        path.writer().use {
+            gson.toJson(current, type.java, it)
+        }
     }
 }

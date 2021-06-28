@@ -24,6 +24,7 @@
 
 package me.dkim19375.dkimcore.coroutine
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.SCOPE
@@ -34,7 +35,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @API
-class ActionConsumer<T>(val task: () -> T) {
+class ActionConsumer<T>(private val scope: CoroutineScope = SCOPE, val task: () -> T) {
 
     @API
     suspend fun await(
@@ -47,7 +48,7 @@ class ActionConsumer<T>(val task: () -> T) {
 
     @API
     fun queue(success: ((T) -> Unit) = {}, failure: ((Throwable) -> Unit) = {}) {
-        SCOPE.launch {
+        scope.launch {
             val result: T
             try {
                 result = task()
@@ -60,14 +61,12 @@ class ActionConsumer<T>(val task: () -> T) {
     }
 
     @API
-    fun complete(): T {
-        return task()
-    }
+    fun complete(): T = task()
 
     @API
     fun submit(): CompletableFuture<T> {
         val future = CompletableFuture<T>()
-        SCOPE.launch future@{
+        scope.launch future@{
             val result: T
             try {
                 result = task()
