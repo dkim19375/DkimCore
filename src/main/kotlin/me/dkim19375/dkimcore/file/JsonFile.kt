@@ -33,7 +33,7 @@ import kotlin.io.path.reader
 import kotlin.io.path.writer
 import kotlin.reflect.KClass
 
-class JsonFile<T : Any>(
+open class JsonFile<T : Any>(
     private val type: KClass<T>,
     fileName: String,
     prettyPrinting: Boolean = true,
@@ -59,9 +59,9 @@ class JsonFile<T : Any>(
         }
     }
 
-    fun get(): T = current
+    open fun get(): T = current
 
-    fun set(obj: T) {
+    open fun set(obj: T) {
         current = obj
     }
 
