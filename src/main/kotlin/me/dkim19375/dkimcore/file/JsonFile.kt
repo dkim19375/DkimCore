@@ -52,7 +52,7 @@ open class JsonFile<T : Any>(
     init {
         path.createFileAndDirs()
         current = gson.fromJson(path.reader(), type.java) ?: run {
-            val new = type.java.newInstance()
+            val new = type.java.getDeclaredConstructor().newInstance()
             set(new)
             save()
             new
@@ -68,7 +68,7 @@ open class JsonFile<T : Any>(
     override fun reload() {
         super.reload()
         current = gson.fromJson(path.reader(), type.java) ?: run {
-            val new = type.java.newInstance()
+            val new = type.java.getDeclaredConstructor().newInstance()
             set(new)
             save()
             new
