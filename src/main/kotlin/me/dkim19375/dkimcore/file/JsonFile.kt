@@ -38,6 +38,7 @@ open class JsonFile<T : Any>(
     fileName: String,
     prettyPrinting: Boolean = true,
     typeAdapters: Map<Type, Any> = emptyMap(),
+    private val default: () -> T = { type.java.getDeclaredConstructor().newInstance() },
     @API val gson: Gson = GsonBuilder()
         .apply {
             if (prettyPrinting) {
@@ -52,7 +53,7 @@ open class JsonFile<T : Any>(
     init {
         path.createFileAndDirs()
         current = gson.fromJson(path.reader(), type.java) ?: run {
-            val new = type.java.getDeclaredConstructor().newInstance()
+            val new = default()
             set(new)
             save()
             new
