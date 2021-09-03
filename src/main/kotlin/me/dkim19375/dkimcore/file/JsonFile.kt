@@ -38,14 +38,14 @@ open class JsonFile<T : Any>(
     private val type: KClass<T>,
     fileName: String,
     prettyPrinting: Boolean = true,
-    typeAdapters: Map<Type, Any> = emptyMap(),
+    typeAdapters: Map<Class<*>, Any> = emptyMap(),
     private val default: () -> T = { type.java.getDeclaredConstructor().newInstance() },
     @API val gson: Gson = GsonBuilder()
         .apply {
             if (prettyPrinting) {
                 setPrettyPrinting()
             }
-            typeAdapters.forEach(this::registerTypeAdapter)
+            typeAdapters.forEach(this::registerTypeHierarchyAdapter)
         }.create(),
 ) : DataFile(fileName) {
 
