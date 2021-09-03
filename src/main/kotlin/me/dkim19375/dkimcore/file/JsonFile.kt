@@ -28,6 +28,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.createFileAndDirs
+import me.dkim19375.dkimcore.extension.runCatchingOrNull
 import java.lang.reflect.Type
 import kotlin.io.path.reader
 import kotlin.io.path.writer
@@ -45,14 +46,14 @@ open class JsonFile<T : Any>(
                 setPrettyPrinting()
             }
             typeAdapters.forEach(this::registerTypeAdapter)
-        }.create()
+        }.create(),
 ) : DataFile(fileName) {
 
     private var current: T
 
     init {
         path.createFileAndDirs()
-        current = gson.fromJson(path.reader(), type.java) ?: run {
+        current = runCatchingOrNull { path.reader().use { gson.fromJson(it, type.java) } } ?: run {
             val new = default()
             set(new)
             save()
@@ -68,7 +69,7 @@ open class JsonFile<T : Any>(
 
     override fun reload() {
         super.reload()
-        current = gson.fromJson(path.reader(), type.java) ?: run {
+        current = runCatchingOrNull { path.reader().use { gson.fromJson(it, type.java) } } ?: run {
             val new = type.java.getDeclaredConstructor().newInstance()
             set(new)
             save()
