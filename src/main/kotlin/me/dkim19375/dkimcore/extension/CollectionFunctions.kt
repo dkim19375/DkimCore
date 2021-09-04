@@ -60,3 +60,19 @@ fun <T> Collection<Collection<T>>.combine(): List<T> {
         return@fold list
     }
 }
+
+fun <T> Set<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(this)
+
+fun <T> List<T>.toImmutableList(): List<T> = Collections.unmodifiableList(this)
+
+@API
+fun <T> immutableSetOf(vararg elements: T): Set<T> = setOf(*elements).toImmutableSet()
+
+@API
+fun <T> immutableSetOf(elements: Collection<T>): Set<T> = elements.toSet().toImmutableSet()
+
+@API
+fun <T> immutableListOf(vararg elements: T): List<T> = listOf(*elements).toImmutableList()
+
+@API
+fun <T> immutableListOf(elements: Collection<T>): List<T> = elements.toList().toImmutableList()
