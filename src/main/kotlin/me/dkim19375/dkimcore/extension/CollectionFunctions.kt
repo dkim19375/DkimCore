@@ -61,9 +61,7 @@ fun <T> Collection<Collection<T>>.combine(): List<T> {
     }
 }
 
-fun <T> Set<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(this)
-
-fun <T> List<T>.toImmutableList(): List<T> = Collections.unmodifiableList(this)
+fun <T> Iterable<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(toSet())
 
 @API
 fun <T> immutableSetOf(vararg elements: T): Set<T> = setOf(*elements).toImmutableSet()
@@ -71,8 +69,21 @@ fun <T> immutableSetOf(vararg elements: T): Set<T> = setOf(*elements).toImmutabl
 @API
 fun <T> immutableSetOf(elements: Collection<T>): Set<T> = elements.toSet().toImmutableSet()
 
+fun <T> Iterable<T>.toImmutableList(): List<T> = Collections.unmodifiableList(toList())
+
 @API
 fun <T> immutableListOf(vararg elements: T): List<T> = listOf(*elements).toImmutableList()
 
 @API
 fun <T> immutableListOf(elements: Collection<T>): List<T> = elements.toList().toImmutableList()
+
+@API
+fun <K, V> Iterable<Pair<K, V>>.toImmutableMap(): Map<K, V> = toMap().toImmutableMap()
+
+fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> = Collections.unmodifiableMap(this)
+
+@API
+fun <K, V> immutableMapOf(vararg elements: Pair<K, V>): Map<K, V> = mapOf(*elements).toImmutableMap()
+
+@API
+fun <K, V> immutableMapOf(elements: Collection<Pair<K, V>>): Map<K, V> = elements.toMap().toImmutableMap()
