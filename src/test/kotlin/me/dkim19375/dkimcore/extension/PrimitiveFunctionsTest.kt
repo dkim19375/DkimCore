@@ -24,25 +24,17 @@
 
 package me.dkim19375.dkimcore.extension
 
-import me.dkim19375.dkimcore.annotation.API
-import java.util.*
+import kotlin.test.*
 
-@API
-fun String.toUUID(): UUID? {
-    try {
-        return UUID.fromString(replace(" ", ""))
-    } catch (ignored: IllegalArgumentException) {
+private const val BEFORE = 1.23456789
+private val TESTS = (1..8).toList()
+
+class PrimitiveFunctionsTest {
+    @Test
+    fun `Decimal places`() {
+        for (test in TESTS) {
+            assertTrue(BEFORE.setDecimalPlaces(test).toString()
+                .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()))
+        }
     }
-    val new = replace('-', ' ').replace(" ", "")
-    try {
-        val uuid1: String = new.substring(0, 8)
-        val uuid2: String = new.substring(8, 12)
-        val uuid3: String = new.substring(12, 16)
-        val uuid4: String = new.substring(16, 20)
-        val uuid5: String = new.substring(20)
-        return UUID.fromString("$uuid1-$uuid2-$uuid3-$uuid4-$uuid5")
-    } catch (_: IndexOutOfBoundsException) {
-    } catch (_: IllegalArgumentException) {
-    }
-    return null
 }
