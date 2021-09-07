@@ -53,7 +53,12 @@ open class JsonFile<T : Any>(
 
     init {
         path.createFileAndDirs()
-        current = runCatchingOrNull { path.reader().use { gson.fromJson(it, type.java) } } ?: run {
+        current = try {
+            path.reader().use { gson.fromJson(it, type.java) }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            null
+        } ?: run {
             val new = default()
             set(new)
             save()
@@ -69,7 +74,12 @@ open class JsonFile<T : Any>(
 
     override fun reload() {
         super.reload()
-        current = runCatchingOrNull { path.reader().use { gson.fromJson(it, type.java) } } ?: run {
+        current = try {
+            path.reader().use { gson.fromJson(it, type.java) }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            null
+        } ?: run {
             val new = type.java.getDeclaredConstructor().newInstance()
             set(new)
             save()
