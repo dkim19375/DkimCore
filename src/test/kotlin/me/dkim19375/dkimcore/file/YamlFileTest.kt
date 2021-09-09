@@ -52,21 +52,21 @@ internal class YamlFileTest {
 
     @Test
     fun `File creation`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
         assertTrue(file.file.exists())
         file.file.delete()
     }
 
     @Test
     fun `Get property`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
         assertEquals(file.get(SettingsHolderTesting.PROPERTY), DEFAULT_VALUE)
         file.file.delete()
     }
 
     @Test
     fun `Set and get property`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
         assertEquals(file.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
@@ -75,18 +75,18 @@ internal class YamlFileTest {
 
     @Test
     fun `Set and get property with new instance`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
-        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
         assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
         file.file.delete()
     }
 
     @Test
     fun `Not instantly reloading property with new instance`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
-        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
+        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
         assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), DEFAULT_VALUE)
@@ -95,8 +95,8 @@ internal class YamlFileTest {
 
     @Test
     fun `Reloading property with new instance`() {
-        val file = YamlFile(SettingsHolderTesting, TEST_FILE.path)
-        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE.path)
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
+        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
         newFile.reload()

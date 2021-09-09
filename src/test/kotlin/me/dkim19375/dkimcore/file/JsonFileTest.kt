@@ -44,13 +44,13 @@ class JsonFileTest {
     fun `Automatic file creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        JsonFile(TestClass::class, TEST_FILE.absolutePath)
+        JsonFile(TestClass::class, TEST_FILE)
         assertTrue(TEST_FILE.exists())
     }
 
     @Test
     fun `File creation on save`() {
-        val file = JsonFile(TestClass::class, TEST_FILE.absolutePath)
+        val file = JsonFile(TestClass::class, TEST_FILE)
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.save()
@@ -59,7 +59,7 @@ class JsonFileTest {
 
     @Test
     fun `File creation on reload`() {
-        val file = JsonFile(TestClass::class, TEST_FILE.absolutePath)
+        val file = JsonFile(TestClass::class, TEST_FILE)
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.reload()
@@ -70,7 +70,7 @@ class JsonFileTest {
     fun `Automatic instance creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE.absolutePath)
+        val file = JsonFile(TestClass::class, TEST_FILE)
         assertEquals(file.get().value1, VALUE_1)
         assertEquals(file.get().value2, VALUE_2)
     }
@@ -79,8 +79,8 @@ class JsonFileTest {
     fun `Testing reload and set`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE.absolutePath)
-        val file2 = JsonFile(TestClass::class, TEST_FILE.absolutePath)
+        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file2 = JsonFile(TestClass::class, TEST_FILE)
         val test = TestClass()
         test.value1 = VALUE_1_ALT
         test.value2 = VALUE_2_ALT

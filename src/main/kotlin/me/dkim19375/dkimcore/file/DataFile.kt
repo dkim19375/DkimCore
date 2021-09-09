@@ -30,12 +30,9 @@ import me.dkim19375.dkimcore.extension.toPath
 import java.io.File
 import java.nio.file.Path
 
-abstract class DataFile(@API val fileName: String) {
+abstract class DataFile(@API val file: File) {
     @API
-    val path: Path = fileName.toPath()
-    @API
-    val file: File
-        get() = path.toFile()
+    val path: Path = file.toPath()
 
     open fun reload() {
         path.createFileAndDirs()

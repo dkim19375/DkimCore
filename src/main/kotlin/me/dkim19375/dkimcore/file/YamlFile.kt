@@ -28,11 +28,12 @@ import me.dkim19375.dkimcore.annotation.API
 import me.mattstudios.config.SettingsHolder
 import me.mattstudios.config.SettingsManager
 import me.mattstudios.config.properties.Property
+import java.io.File
 
 @API
-open class YamlFile(@API val properties: SettingsHolder, fileName: String) : DataFile(fileName) {
+open class YamlFile(@API val properties: SettingsHolder, file: File) : DataFile(file) {
     @API
-    val manager: SettingsManager = SettingsManager.from(file).configurationData(properties.javaClass).create()
+    val manager: SettingsManager = SettingsManager.from(this.file).configurationData(properties.javaClass).create()
 
     @API
     fun <T : Any> get(property: Property<T>): T = manager.get(property)
