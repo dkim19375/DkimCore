@@ -13,7 +13,7 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding 'UTF-8'
 
 group 'me.dkim19375'
-version '1.1.12'
+version '1.1.13'
 
 //noinspection GrUnresolvedAccess
 compileKotlin.kotlinOptions {
@@ -27,8 +27,8 @@ compileTestKotlin.kotlinOptions {
 }
 
 license {
-    header = rootProject.file("LICENSE")
-    include "**/*.kt"
+    header = rootProject.file 'LICENSE'
+    include '**/*.kt'
 }
 
 test {
@@ -60,9 +60,9 @@ dependencies {
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test:1.5.21'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
 }
 
@@ -134,8 +134,10 @@ publishing {
 }
 
 nexusPublishing {
-    packageGroup.set("io.github.dkim19375")
+    //noinspection GrUnresolvedAccess
+    packageGroup.set 'io.github.dkim19375'
     repositories {
+        //noinspection GrUnresolvedAccess
         sonatype {
             nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
             snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
@@ -145,12 +147,6 @@ nexusPublishing {
     }
 }
 
-signing {
-/*    def keyId = findProperty("signingKeyId")
-    def key = findProperty("signingKey")
-    def pass = findProperty("signingPassword")
-    useInMemoryPgpKeys(keyId, key, pass)*/
-    sign publishing.publications.mavenJava
-}
+signing.sign publishing.publications.mavenJava
 
 tasks.jar.dependsOn licenseFormat

@@ -33,8 +33,13 @@ class PrimitiveFunctionsTest {
     @Test
     fun `Decimal places`() {
         for (test in TESTS) {
-            assertTrue(BEFORE.setDecimalPlaces(test).toString()
-                .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()))
+            assertTrue(
+                actual = BEFORE.setDecimalPlaces(test).toString()
+                    .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()),
+                message = "Decimal places: $test. " +
+                        "Result: ${BEFORE.setDecimalPlaces(test)}. " +
+                        "Expected (ends with): ${test + if (test >= 3 && test != 8) 2 else 1}"
+            )
         }
     }
 }

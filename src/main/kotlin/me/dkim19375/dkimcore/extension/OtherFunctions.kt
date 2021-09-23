@@ -24,10 +24,29 @@
 
 package me.dkim19375.dkimcore.extension
 
+import me.dkim19375.dkimcore.annotation.API
+
+@API
 inline fun <reified T>typedNull(): T? = null
 
 fun <T> runCatchingOrNull(action: () -> T?): T? = try {
     action()
 } catch (e: Throwable) {
     null
+}
+
+@API
+fun <T> getMillisAndValue(function: () -> T): Pair<Double, T> {
+    val start = System.nanoTime()
+    val value = function()
+    val end = System.nanoTime()
+    return ((end - start).toDouble() / 1000000.0) to value
+}
+
+@API
+fun <T> getMillisLongAndValue(function: () -> T): Pair<Long, T> {
+    val start = System.currentTimeMillis()
+    val value = function()
+    val end = System.currentTimeMillis()
+    return (end - start) to value
 }
