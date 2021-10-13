@@ -48,6 +48,17 @@ open class YamlFile(@API val properties: SettingsHolder, file: File) : DataFile(
     }
 
     @API
+    fun <T : Any> save(property: Property<T>, value: T) = save(mapOf(property to value))
+
+    @API
+    fun <T : Any> save(properties: Map<Property<T>, T>) {
+        for ((property, value) in properties) {
+            set(property, value)
+        }
+        save()
+    }
+
+    @API
     override fun save() {
         super.save()
         manager.save()

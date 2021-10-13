@@ -101,4 +101,23 @@ class JsonFileTest {
         assertEquals(file2.get().value1, VALUE_1_ALT)
         assertEquals(file2.get().value2, VALUE_2_ALT)
     }
+
+    @Test
+    fun `Testing set & save`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file2 = JsonFile(TestClass::class, TEST_FILE)
+        val test = TestClass()
+        test.value1 = VALUE_1_ALT
+        test.value2 = VALUE_2_ALT
+        file.save(test)
+        assertEquals(file.get().value1, VALUE_1_ALT)
+        assertEquals(file.get().value2, VALUE_2_ALT)
+        assertNotEquals(file2.get().value1, VALUE_1_ALT)
+        assertNotEquals(file2.get().value2, VALUE_2_ALT)
+        file2.reload()
+        assertEquals(file2.get().value1, VALUE_1_ALT)
+        assertEquals(file2.get().value2, VALUE_2_ALT)
+    }
 }

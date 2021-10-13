@@ -28,9 +28,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.createFileAndDirs
-import me.dkim19375.dkimcore.extension.runCatchingOrNull
 import java.io.File
-import java.lang.reflect.Type
 import kotlin.io.path.reader
 import kotlin.io.path.writer
 import kotlin.reflect.KClass
@@ -86,6 +84,11 @@ open class JsonFile<T : Any>(
             save()
             new
         }
+    }
+
+    open fun save(obj: T) {
+        set(obj)
+        save()
     }
 
     override fun save() {

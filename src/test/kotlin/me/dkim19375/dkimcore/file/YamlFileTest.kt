@@ -103,4 +103,14 @@ internal class YamlFileTest {
         assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
         file.file.delete()
     }
+
+    @Test
+    fun `Testing set & save`() {
+        val file = YamlFile(SettingsHolderTesting, TEST_FILE)
+        val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
+        file.save(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
+        newFile.reload()
+        assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
+        file.file.delete()
+    }
 }
