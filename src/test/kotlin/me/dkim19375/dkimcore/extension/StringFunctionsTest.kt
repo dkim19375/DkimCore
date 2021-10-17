@@ -28,6 +28,13 @@ import java.util.*
 import kotlin.test.*
 
 private val TEST_UUID = UUID.randomUUID()
+private const val PLACEHOLDER_STR = "Testing placeholder_1 and placeholder 2!"
+private const val PERCENT_PLACEHOLDER_STR = "Testing %placeholder_1% and %placeholder 2%!"
+private const val EXPECTED_PLACEHOLDER = "Testing replacement_1 and replacement 2!"
+private val PLACEHOLDERS = mapOf(
+    "placeholder_1" to "replacement_1",
+    "placeholder 2" to "replacement 2"
+)
 
 class StringFunctionsTest {
     @Test
@@ -49,5 +56,13 @@ class StringFunctionsTest {
         val value = TEST_UUID.toString().replace("-", " ").toUUID()
         assertNotNull(value)
         assertEquals(value, TEST_UUID)
+    }
+
+    @Test
+    fun `Set placeholders`() {
+        assertEquals(PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false), EXPECTED_PLACEHOLDER)
+        assertNotEquals(PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
+        assertEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
+        assertNotEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false), EXPECTED_PLACEHOLDER)
     }
 }

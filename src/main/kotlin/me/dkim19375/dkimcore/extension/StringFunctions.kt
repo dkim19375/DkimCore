@@ -46,3 +46,12 @@ fun String.toUUID(): UUID? {
     }
     return null
 }
+
+@API
+fun String.setPlaceholders(map: Map<String, String>, wrapPercent: Boolean = true): String = let {
+    var new = it
+    for ((text, replacement) in map) {
+        new = new.replace(if (wrapPercent) "%$text%" else text, replacement)
+    }
+    new
+}
