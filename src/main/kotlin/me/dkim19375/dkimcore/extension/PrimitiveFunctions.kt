@@ -27,6 +27,16 @@ package me.dkim19375.dkimcore.extension
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
-fun Double.setDecimalPlaces(amount: Int): Double = 10.0.pow(amount).let { pow ->
-    (this * pow).roundToLong() / pow
+fun Float.setDecimalPlaces(amount: Int?): Float {
+    amount ?: return this
+    return 10f.pow(amount).let { pow ->
+        (this * pow).roundToLong() / pow
+    }
+}
+
+fun Double.setDecimalPlaces(amount: Int?): Double {
+    amount ?: return this
+    return 10.0.pow(amount).let { pow ->
+        (this * pow).roundToLong() / pow
+    }
 }
