@@ -35,7 +35,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @API
-class ActionConsumer<T>(private val scope: CoroutineScope = SCOPE, val task: () -> T) {
+class ActionConsumer<T>(private val scope: CoroutineScope? = SCOPE, val task: () -> T) {
 
     @API
     suspend fun await(
@@ -47,16 +47,26 @@ class ActionConsumer<T>(private val scope: CoroutineScope = SCOPE, val task: () 
     }
 
     @API
-    fun queue(success: ((T) -> Unit) = {}, failure: ((Throwable) -> Unit) = {}) {
-        scope.launch {
-            val result: T
+    fun queue(success: ((T) -> Unit) = {}, failure: ((Throwable) -> Unit) = {
+        throw it
+    }) {
+        val scope = scope
+        if (scope == null) {
             try {
-                result = task()
+                success(task())
+            } catch (error: Throwable) {
+                failure(error)
+                return
+            }
+            return
+        }
+        scope.launch {
+            try {
+                success(task())
             } catch (error: Throwable) {
                 failure(error)
                 return@launch
             }
-            success(result)
         }
     }
 
@@ -65,16 +75,21 @@ class ActionConsumer<T>(private val scope: CoroutineScope = SCOPE, val task: () 
 
     @API
     fun submit(): CompletableFuture<T> {
+        if (scope == null) {
+            return try {
+                CompletableFuture.completedFuture(task())
+            } catch (error: Throwable) {
+                CompletableFuture.failedFuture(error)
+            }
+        }
         val future = CompletableFuture<T>()
         scope.launch future@{
-            val result: T
             try {
-                result = task()
+                future.complete(task())
             } catch (error: Throwable) {
                 future.completeExceptionally(error)
                 return@future
             }
-            future.complete(result)
         }
         return future
     }
