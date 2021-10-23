@@ -32,7 +32,7 @@ import java.nio.file.Path
 
 abstract class DataFile(@API val file: File) {
     @API
-    val path: Path = file.toPath()
+    open val path: Path = file.toPath()
 
     open fun reload() {
         path.createFileAndDirs()

@@ -35,10 +35,10 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @API
-class ActionConsumer<T>(private val scope: CoroutineScope? = SCOPE, val task: () -> T) {
+open class ActionConsumer<T>(protected open val scope: CoroutineScope? = SCOPE, open val task: () -> T) {
 
     @API
-    suspend fun await(
+    open suspend fun await(
         failure: (Continuation<T>, Throwable) -> Unit = { continuation, throwable ->
             continuation.resumeWithException(throwable)
         },
@@ -47,9 +47,12 @@ class ActionConsumer<T>(private val scope: CoroutineScope? = SCOPE, val task: ()
     }
 
     @API
-    fun queue(success: ((T) -> Unit) = {}, failure: ((Throwable) -> Unit) = {
-        throw it
-    }) {
+    open fun queue(
+        success: ((T) -> Unit) = {},
+        failure: ((Throwable) -> Unit) = {
+            throw it
+        },
+    ) {
         val scope = scope
         if (scope == null) {
             try {
@@ -71,16 +74,14 @@ class ActionConsumer<T>(private val scope: CoroutineScope? = SCOPE, val task: ()
     }
 
     @API
-    fun complete(): T = task()
+    open fun complete(): T = task()
 
     @API
-    fun submit(): CompletableFuture<T> {
-        if (scope == null) {
-            return try {
-                CompletableFuture.completedFuture(task())
-            } catch (error: Throwable) {
-                CompletableFuture.failedFuture(error)
-            }
+    open fun submit(): CompletableFuture<T> {
+        val scope = scope ?: return try {
+            CompletableFuture.completedFuture(task())
+        } catch (error: Throwable) {
+            CompletableFuture.failedFuture(error)
         }
         val future = CompletableFuture<T>()
         scope.launch future@{
