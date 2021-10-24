@@ -67,6 +67,9 @@ fun <K, V> Collection<Map<K, V>>.combine(): Map<K, V> =
         return@fold map
     }
 
+@API
+fun <T> Collection<T>.split(size: Int): List<List<T>> = windowed(size, size, true)
+
 fun <T> Iterable<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(toSet())
 
 @API

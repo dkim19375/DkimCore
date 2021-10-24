@@ -24,6 +24,7 @@
 
 package me.dkim19375.dkimcore.extension
 
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.*
@@ -36,6 +37,13 @@ private val LIST_LIST: List<List<Int>> = listOf(listOf(1, 2, 3), listOf(4, 5, 6)
 private val EXPECTED_LIST: List<Int> = listOf(1, 2, 3, 4, 5, 6)
 private val MAP_LIST: List<Map<Int, Int>> = listOf(mapOf(1 to 2, 3 to 4), mapOf(5 to 6, 7 to 8))
 private val EXPECTED_MAP: Map<Int, Int> = mapOf(1 to 2, 3 to 4, 5 to 6, 7 to 8)
+private val UNSPLIT_LIST: List<Int> = (1..20).toList()
+private val SPLIT_LIST: List<List<Int>> = listOf(
+    (1..6).toList(),
+    (7..12).toList(),
+    (13..18).toList(),
+    listOf(19, 20)
+)
 
 class CollectionFunctionsTest {
     @Test
@@ -102,7 +110,6 @@ class CollectionFunctionsTest {
         }
     }
 
-
     @Test
     fun `Immutable map`() {
         assertThrows<UnsupportedOperationException> {
@@ -117,5 +124,12 @@ class CollectionFunctionsTest {
         assertThrows<UnsupportedOperationException> {
             (listOf("a" to "b").toImmutableMap() as MutableMap<String, String>)["c"] = "d"
         }
+    }
+
+    @Test
+    fun `Split list`() {
+        assertContentEquals(UNSPLIT_LIST.split(6), SPLIT_LIST)
+        assertDoesNotThrow { UNSPLIT_LIST.split(21) }
+        assertContentEquals(UNSPLIT_LIST.split(21), listOf(UNSPLIT_LIST))
     }
 }
