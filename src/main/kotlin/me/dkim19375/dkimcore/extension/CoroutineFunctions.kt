@@ -27,6 +27,7 @@ package me.dkim19375.dkimcore.extension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import me.dkim19375.dkimcore.annotation.API
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.Continuation
