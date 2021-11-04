@@ -44,6 +44,11 @@ private val SPLIT_LIST: List<List<Int>> = listOf(
     (13..18).toList(),
     listOf(19, 20)
 )
+private val SPLIT_LIMITED_LIST: List<List<Int>> = listOf(
+    (1..6).toList(),
+    (7..12).toList(),
+    (13..20).toList(),
+)
 
 class CollectionFunctionsTest {
     @Test
@@ -131,5 +136,10 @@ class CollectionFunctionsTest {
         assertContentEquals(UNSPLIT_LIST.split(6), SPLIT_LIST)
         assertDoesNotThrow { UNSPLIT_LIST.split(21) }
         assertContentEquals(UNSPLIT_LIST.split(21), listOf(UNSPLIT_LIST))
+    }
+
+    @Test
+    fun `Split list with limit`() {
+        assertContentEquals(UNSPLIT_LIST.split(6, 3), SPLIT_LIMITED_LIST)
     }
 }

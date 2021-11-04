@@ -68,7 +68,17 @@ fun <K, V> Collection<Map<K, V>>.combine(): Map<K, V> =
     }
 
 @API
-fun <T> Collection<T>.split(size: Int): List<List<T>> = windowed(size, size, true)
+fun <T> Collection<T>.split(size: Int, limit: Int? = null): List<List<T>> =
+    fold<T, MutableList<MutableList<T>>>(mutableListOf(mutableListOf())) { list, value ->
+        val inner = list.lastOrNull() ?: return@fold mutableListOf(mutableListOf(value))
+        if ((limit != null && limit <= list.size) || (inner.size < size)) {
+            inner.add(value)
+            return@fold list
+        }
+        val new = mutableListOf(value)
+        list.add(new)
+        list
+    }
 
 fun <T> Iterable<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(toSet())
 
