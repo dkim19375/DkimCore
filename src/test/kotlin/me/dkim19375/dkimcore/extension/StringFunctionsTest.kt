@@ -25,15 +25,20 @@
 package me.dkim19375.dkimcore.extension
 
 import java.util.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 private val TEST_UUID = UUID.randomUUID()
 private const val PLACEHOLDER_STR = "Testing placeholder_1 and placeholder 2!"
 private const val PERCENT_PLACEHOLDER_STR = "Testing %placeholder_1% and %placeholder 2%!"
+private const val CUSTOM_PLACEHOLDER_STR = "Testing (placeholder_1) and (placeholder 2)! *(no_parse)"
 private const val EXPECTED_PLACEHOLDER = "Testing replacement_1 and replacement 2!"
 private val PLACEHOLDERS = mapOf(
     "placeholder_1" to "replacement_1",
-    "placeholder 2" to "replacement 2"
+    "placeholder 2" to "replacement 2",
+    "no_parse" to "parsed"
 )
 
 class StringFunctionsTest {
@@ -64,5 +69,11 @@ class StringFunctionsTest {
         assertNotEquals(PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
         assertEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
         assertNotEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false), EXPECTED_PLACEHOLDER)
+        assertEquals(CUSTOM_PLACEHOLDER_STR.setPlaceholders(
+            map = PLACEHOLDERS,
+            prefix = "(",
+            suffix = ")",
+            escape = '*'
+        ), "$EXPECTED_PLACEHOLDER (no_parse)")
     }
 }

@@ -22,10 +22,17 @@
  * SOFTWARE.
  */
 
+@file:Suppress("DEPRECATION")
+
 package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
+import org.apache.commons.lang3.text.StrSubstitutor
+import org.apache.commons.text.StringSubstitutor
 import java.util.*
+
+private val usesLang3 = runCatchingOrNull { Class.forName("org.apache.commons.lang3.StringUtils") } != null
+private val usesApacheText = runCatchingOrNull { Class.forName("org.apache.commons.text.WordUtils") } != null
 
 @API
 fun String.toUUID(): UUID? {
@@ -48,10 +55,55 @@ fun String.toUUID(): UUID? {
 }
 
 @API
-fun String.setPlaceholders(map: Map<String, String>, wrapPercent: Boolean = true): String = let {
-    var new = it
-    for ((text, replacement) in map) {
-        new = new.replace(if (wrapPercent) "%$text%" else text, replacement)
+fun String.setPlaceholders(map: Map<String, String>, wrapPercent: Boolean = true): String = if (wrapPercent) {
+    setPlaceholders(map, "%", "%")
+} else {
+    setPlaceholders(map, "", "")
+}
+
+/**
+ * Sets placeholders in a String
+ *
+ *  EXAMPLE:
+ *
+ *      "Text (placeholder) and *(escaped)".setPlaceholders(
+ *          map = mapOf(
+ *              "placeholder" to "replaced",
+ *              "escaped" to "not replaced"
+ *          ),
+ *          prefix = "(",
+ *          suffix = ")",
+ *          escape = '*'
+ *      )
+ *
+ *  will return "Text replaced and (escaped)"
+ *
+ * @param map The map to replace the text with - Key = old value, Value = new value
+ * @param prefix The prefix of the placeholder to replace - can be blank
+ * @param suffix The suffix of the placeholder to replace - can be blank
+ * @param escape A character to exclude the placeholder from being parsed - '0' = don't escape
+ * @return The String with its placeholders replaced
+ */
+@API
+fun String.setPlaceholders(map: Map<String, String>, prefix: String, suffix: String, escape: Char = '0'): String {
+    val slowest = {
+        var new = this
+        for ((text, replacement) in map) {
+            new = new.replace(if (prefix.isEmpty() && suffix.isEmpty()) text else "$prefix$text$suffix", replacement)
+        }
+        new
     }
-    new
+    return when {
+        usesApacheText -> if (prefix.isEmpty() || suffix.isEmpty()) {
+            slowest()
+        } else {
+            StringSubstitutor(map, prefix, suffix, escape).replace(this)
+        }
+        usesLang3 -> if (prefix.isEmpty() || suffix.isEmpty()) {
+            slowest()
+        } else {
+            StrSubstitutor(map, prefix, suffix, escape).replace(this)
+        }
+        else -> slowest()
+    }
 }
