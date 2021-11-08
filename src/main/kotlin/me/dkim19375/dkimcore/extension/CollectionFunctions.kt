@@ -26,6 +26,8 @@ package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedDeque
 
 @API
 fun Iterable<String>.containsIgnoreCase(find: String): Boolean = getIgnoreCase(find) != null
@@ -86,7 +88,7 @@ fun <T> Iterable<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(toSet
 fun <T> immutableSetOf(vararg elements: T): Set<T> = setOf(*elements).toImmutableSet()
 
 @API
-fun <T> immutableSetOf(elements: Collection<T>): Set<T> = elements.toSet().toImmutableSet()
+fun <T> immutableSetOf(elements: Collection<T>): Set<T> = elements.toImmutableSet()
 
 fun <T> Iterable<T>.toImmutableList(): List<T> = Collections.unmodifiableList(toList())
 
@@ -94,7 +96,7 @@ fun <T> Iterable<T>.toImmutableList(): List<T> = Collections.unmodifiableList(to
 fun <T> immutableListOf(vararg elements: T): List<T> = listOf(*elements).toImmutableList()
 
 @API
-fun <T> immutableListOf(elements: Collection<T>): List<T> = elements.toList().toImmutableList()
+fun <T> immutableListOf(elements: Collection<T>): List<T> = elements.toImmutableList()
 
 @API
 fun <K, V> Iterable<Pair<K, V>>.toImmutableMap(): Map<K, V> = toMap().toImmutableMap()
@@ -106,3 +108,33 @@ fun <K, V> immutableMapOf(vararg elements: Pair<K, V>): Map<K, V> = mapOf(*eleme
 
 @API
 fun <K, V> immutableMapOf(elements: Collection<Pair<K, V>>): Map<K, V> = elements.toMap().toImmutableMap()
+
+
+fun <T> Iterable<T>.toConcurrentSet(): MutableSet<T> = Collections.newSetFromMap<T>(ConcurrentHashMap()).also { set ->
+    set.addAll(this)
+}
+
+@API
+fun <T> concurrentSetOf(vararg elements: T): MutableSet<T> = setOf(*elements).toConcurrentSet()
+
+@API
+fun <T> concurrentSetOf(elements: Collection<T>): MutableSet<T> = elements.toConcurrentSet()
+
+fun <T> Iterable<T>.toConcurrentDeque(): Deque<T> = ConcurrentLinkedDeque((this as? Collection<T>) ?: toList())
+
+@API
+fun <T> concurrentDequeOf(vararg elements: T): Deque<T> = listOf(*elements).toConcurrentDeque()
+
+@API
+fun <T> concurrentDequeOf(elements: Collection<T>): Deque<T> = elements.toConcurrentDeque()
+
+@API
+fun <K, V> Iterable<Pair<K, V>>.toConcurrentMap(): MutableMap<K, V> = toMap().toConcurrentMap()
+
+fun <K, V> Map<K, V>.toConcurrentMap(): MutableMap<K, V> = ConcurrentHashMap(this)
+
+@API
+fun <K, V> concurrentMapOf(vararg elements: Pair<K, V>): MutableMap<K, V> = mapOf(*elements).toConcurrentMap()
+
+@API
+fun <K, V> concurrentMapOf(elements: Collection<Pair<K, V>>): MutableMap<K, V> = elements.toMap().toConcurrentMap()

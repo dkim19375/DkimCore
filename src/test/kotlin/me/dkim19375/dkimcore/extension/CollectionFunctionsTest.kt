@@ -132,6 +132,36 @@ class CollectionFunctionsTest {
     }
 
     @Test
+    fun `Concurrent set`() {
+        assertDoesNotThrow {
+            val set = concurrentSetOf(1, 2, 3)
+            for (i in set) {
+                set.remove(i)
+            }
+        }
+    }
+
+    @Test
+    fun `Concurrent Deque`() {
+        assertDoesNotThrow {
+            val deque = listOf(1, 2, 3).toConcurrentDeque()
+            for (i in deque) {
+                deque.remove(i)
+            }
+        }
+    }
+
+    @Test
+    fun `Concurrent map`() {
+        assertDoesNotThrow {
+            val map = mapOf(1 to 2, 3 to 4, 5 to 6).toConcurrentMap()
+            for (i in map) {
+                map.remove(i.key)
+            }
+        }
+    }
+
+    @Test
     fun `Split list`() {
         assertContentEquals(UNSPLIT_LIST.split(6), SPLIT_LIST)
         assertDoesNotThrow { UNSPLIT_LIST.split(21) }
