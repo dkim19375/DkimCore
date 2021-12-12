@@ -38,13 +38,19 @@ open class JsonFile<T : Any>(
     file: File,
     prettyPrinting: Boolean = true,
     typeAdapters: Map<Class<*>, Any> = emptyMap(),
+    complexMapSerialization: Boolean = true,
     private val default: () -> T = { type.java.getDeclaredConstructor().newInstance() },
+    val extraGson: GsonBuilder.() -> GsonBuilder = { this },
     @API val gson: Gson = GsonBuilder()
         .apply {
             if (prettyPrinting) {
                 setPrettyPrinting()
             }
+            if (complexMapSerialization) {
+                enableComplexMapKeySerialization()
+            }
             typeAdapters.forEach(this::registerTypeHierarchyAdapter)
+            extraGson()
         }.create(),
 ) : DataFile(file) {
 

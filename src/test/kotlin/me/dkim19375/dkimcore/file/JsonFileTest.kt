@@ -33,11 +33,20 @@ private const val VALUE_1 = 1
 private const val VALUE_1_ALT = 5
 private const val VALUE_2 = "testing"
 private const val VALUE_2_ALT = "testing #2"
+private val VALUE_MAP_1 = mapOf(1 to 2, 3 to 4)
+private val VALUE_MAP_1_ALT = mapOf(4 to 5, 6 to 7)
+private val VALUE_MAP_2 = mapOf("key #1-1" to "value #1-1", "key #1-2" to "value #1-2")
+private val VALUE_MAP_2_ALT = mapOf("key #2-1" to "value #2-1", "key #2-2" to "value #2-2")
 
 class JsonFileTest {
     private class TestClass {
         var value1 = VALUE_1
         var value2 = VALUE_2
+    }
+
+    private class MapTestClass {
+        var map1 = VALUE_MAP_1
+        var map2 = VALUE_MAP_2
     }
 
     @Test
@@ -119,5 +128,62 @@ class JsonFileTest {
         file2.reload()
         assertEquals(file2.get().value1, VALUE_1_ALT)
         assertEquals(file2.get().value2, VALUE_2_ALT)
+    }
+
+
+
+    @Test
+    fun `Automatic instance creation for maps`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(MapTestClass::class, TEST_FILE)
+        assertEquals(file.get().map1, VALUE_MAP_1)
+        assertEquals(file.get().map2, VALUE_MAP_2)
+    }
+
+    @Test
+    fun `Testing reload and set for maps`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(MapTestClass::class, TEST_FILE)
+        val file2 = JsonFile(MapTestClass::class, TEST_FILE)
+        val test = MapTestClass()
+        test.map1 = VALUE_MAP_1_ALT
+        test.map2 = VALUE_MAP_2_ALT
+        file.set(test)
+        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(file.get().map2, VALUE_MAP_2_ALT)
+        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        file2.reload()
+        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        file.save()
+        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(file.get().map2, VALUE_MAP_2_ALT)
+        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        file2.reload()
+        assertEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(file2.get().map2, VALUE_MAP_2_ALT)
+    }
+
+    @Test
+    fun `Testing set & save for maps`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(MapTestClass::class, TEST_FILE)
+        val file2 = JsonFile(MapTestClass::class, TEST_FILE)
+        val test = MapTestClass()
+        test.map1 = VALUE_MAP_1_ALT
+        test.map2 = VALUE_MAP_2_ALT
+        file.save(test)
+        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(file.get().map2, VALUE_MAP_2_ALT)
+        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        file2.reload()
+        assertEquals(file2.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(file2.get().map2, VALUE_MAP_2_ALT)
     }
 }
