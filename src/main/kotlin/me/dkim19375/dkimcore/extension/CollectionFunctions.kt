@@ -33,7 +33,15 @@ import java.util.concurrent.ConcurrentLinkedDeque
 fun Iterable<String>.containsIgnoreCase(find: String): Boolean = getIgnoreCase(find) != null
 
 @API
+fun Map<String, *>.containsIgnoreCase(find: String): Boolean = getIgnoreCase(find) != null
+
+@API
 fun Iterable<String>.getIgnoreCase(find: String): String? = firstOrNull { it.equals(find, ignoreCase = true) }
+
+@API
+fun <V> Map<String, V>.getIgnoreCase(find: String): V? = entries.firstOrNull {
+    it.key.equals(find, ignoreCase = true)
+}?.value
 
 @API
 fun <K, V> MutableMap<K, V>.removeIf(filter: (K, V) -> Boolean) {

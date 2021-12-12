@@ -56,6 +56,9 @@ class CollectionFunctionsTest {
         assertTrue(STRING_LIST.containsIgnoreCase("a"))
         assertTrue(STRING_LIST.containsIgnoreCase("A"))
         assertFalse(STRING_LIST.containsIgnoreCase("d"))
+        assertTrue(STRING_MAP.containsIgnoreCase("a"))
+        assertTrue(STRING_MAP.containsIgnoreCase("A"))
+        assertFalse(STRING_MAP.containsIgnoreCase("d"))
     }
 
     @Test
@@ -63,6 +66,9 @@ class CollectionFunctionsTest {
         assertEquals(STRING_LIST.getIgnoreCase("a"), "a")
         assertEquals(STRING_LIST.getIgnoreCase("b"), "B")
         assertNull(STRING_LIST.getIgnoreCase("d"))
+        assertEquals(STRING_MAP.getIgnoreCase("a"), "b")
+        assertEquals(STRING_MAP.getIgnoreCase("C"), "d")
+        assertNull(STRING_MAP.getIgnoreCase("d"))
     }
 
     @Test
