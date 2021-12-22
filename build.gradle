@@ -47,7 +47,7 @@ dependencies {
     compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
     api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10'
     //noinspection GradlePackageUpdate
-    api('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2') {
+    api('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
     //noinspection GradlePackageUpdate
