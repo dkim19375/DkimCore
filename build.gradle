@@ -51,7 +51,7 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin'
     }
     //noinspection GradlePackageUpdate
-    api('org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.2') {
+    api('org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.0') {
         exclude group: 'org.jetbrains.kotlin'
         exclude module: 'kotlinx-coroutines-core'
     }
