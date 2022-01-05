@@ -25,16 +25,40 @@
 package me.dkim19375.dkimcore.async
 
 import kotlinx.coroutines.runBlocking
+import me.dkim19375.dkimcore.extension.getResult
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class ActionConsumerTest {
     private fun <T> getConsumers(task: () -> T): Set<ActionConsumer<T>> = setOf(
         CoroutineConsumer { task() },
         ExecutorsConsumer { task() }
     )
+
+    class ConsumerException : RuntimeException()
+
+    @Test
+    fun `Test exception handling`() {
+        getConsumers {
+            throw ConsumerException()
+        }.forEach { consumer ->
+            assertFailsWith(ConsumerException::class, "Submit failed (type: ${consumer::class.simpleName})") {
+                consumer.submit().getResult().exceptionOrNull()?.let {
+                    throw it
+                }
+            }
+            assertFailsWith(ConsumerException::class, "Complete failed (type: ${consumer::class.simpleName})") {
+                consumer.complete()
+            }
+            runBlocking {
+                assertFailsWith(ConsumerException::class, "Await failed (type: ${consumer::class.simpleName})") {
+                    consumer.await()
+                }
+            }
+        }
+    }
 
     @Test
     fun `Test time of queue`() {

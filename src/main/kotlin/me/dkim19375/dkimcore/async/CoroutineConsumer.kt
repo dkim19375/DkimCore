@@ -27,7 +27,7 @@ package me.dkim19375.dkimcore.async
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.extension.SCOPE
+import me.dkim19375.dkimcore.extension.*
 import java.util.concurrent.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -48,7 +48,7 @@ open class CoroutineConsumer<T>(
     ): T = suspendCoroutine { cont ->
         scope.launch {
             try {
-                cont.resume(FutureTask(task).get(timeout, unit))
+                cont.resume(FutureTask(task).getResult(timeout, unit).getOrThrow())
             } catch (error: Throwable) {
                 cont.resumeWithException(error)
             }
@@ -62,7 +62,7 @@ open class CoroutineConsumer<T>(
     ): T? = suspendCoroutine { cont ->
         scope.launch {
             try {
-                cont.resume(FutureTask(task).get(timeout, unit))
+                cont.resume(FutureTask(task).getResult(timeout, unit).getOrThrow())
             } catch (error: Throwable) {
                 if (error is TimeoutException) {
                     cont.resume(null)
@@ -96,7 +96,7 @@ open class CoroutineConsumer<T>(
             }
             launch {
                 try {
-                    success(future.get(timeout, unit))
+                    success(future.getResult(timeout, unit).getOrThrow())
                 } catch (error: Throwable) {
                     failure(error)
                 }
@@ -117,7 +117,7 @@ open class CoroutineConsumer<T>(
             }
             launch task@{
                 try {
-                    success(future.get(timeout, unit))
+                    success(future.getResult(timeout, unit).getOrThrow())
                 } catch (error: Throwable) {
                     if (error is TimeoutException) {
                         success(null)
@@ -147,7 +147,7 @@ open class CoroutineConsumer<T>(
         timeout: Long,
         unit: TimeUnit,
     ): T {
-        return submit().get(timeout, unit)
+        return submit().getResult(timeout, unit).getOrThrow()
     }
 
     override fun completeWithSafeTimeout(
@@ -155,7 +155,7 @@ open class CoroutineConsumer<T>(
         unit: TimeUnit,
     ): T? {
         return try {
-            submit().get(timeout, unit)
+            submit().getResult(timeout, unit).getOrThrow()
         } catch (_: TimeoutException) {
             null
         }
