@@ -59,7 +59,7 @@ dependencies {
     // optional dependencies
     //noinspection GradlePackageUpdate
     compileOnly 'commons-io:commons-io:2.11.0'
-    compileOnly 'com.google.code.gson:gson:2.8.9'
+    compileOnly 'com.google.code.gson:gson:2.9.0'
     compileOnly 'org.apache.commons:commons-text:1.9'
     compileOnly 'org.apache.commons:commons-lang3:3.12.0'
 
@@ -67,7 +67,7 @@ dependencies {
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
-    testImplementation 'com.google.code.gson:gson:2.8.9'
+    testImplementation 'com.google.code.gson:gson:2.9.0'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test:1.6.10'
     testImplementation 'junit:junit:4.13.2'
