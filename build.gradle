@@ -13,7 +13,7 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding 'UTF-8'
 
 group 'me.dkim19375'
-version '1.2.7'
+version '1.2.8'
 
 //noinspection GrUnresolvedAccess
 compileKotlin.kotlinOptions {
@@ -40,7 +40,7 @@ repositories {
     mavenCentral()
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://m2.dv8tion.net/releases' }
-    maven { url = 'https://repo.mattstudios.me/artifactory/public' }
+    maven { url = 'https://repo.triumphteam.dev/snapshots/' }
 }
 
 dependencies {
