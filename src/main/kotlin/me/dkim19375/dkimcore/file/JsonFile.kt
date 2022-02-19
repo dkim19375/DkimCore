@@ -71,12 +71,15 @@ open class JsonFile<T : Any>(
         }
     }
 
+    @Synchronized
     open fun get(): T = current
 
+    @Synchronized
     open fun set(obj: T) {
         current = obj
     }
 
+    @Synchronized
     override fun reload() {
         super.reload()
         current = try {
@@ -92,11 +95,13 @@ open class JsonFile<T : Any>(
         }
     }
 
+    @Synchronized
     open fun save(obj: T) {
         set(obj)
         save()
     }
 
+    @Synchronized
     override fun save() {
         super.save()
         path.writer().use {

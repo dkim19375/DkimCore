@@ -26,7 +26,6 @@ package me.dkim19375.dkimcore.file
 
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.createFileAndDirs
-import me.dkim19375.dkimcore.extension.toPath
 import java.io.File
 import java.nio.file.Path
 
@@ -34,10 +33,12 @@ abstract class DataFile(@API val file: File) {
     @API
     open val path: Path = file.toPath()
 
+    @Synchronized
     open fun reload() {
         path.createFileAndDirs()
     }
 
+    @Synchronized
     open fun save() {
         path.createFileAndDirs()
     }

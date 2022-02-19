@@ -36,21 +36,26 @@ open class YamlFile(@API val properties: SettingsHolder, file: File) : DataFile(
     val manager: SettingsManager = SettingsManager.from(this.file).configurationData(properties.javaClass).create()
 
     @API
+    @Synchronized
     fun <T : Any> get(property: Property<T>): T = manager.get(property)
 
     @API
+    @Synchronized
     fun <T : Any> set(property: Property<T>, value: T) = manager.set(property, value)
 
     @API
+    @Synchronized
     override fun reload() {
         super.reload()
         manager.reload()
     }
 
     @API
+    @Synchronized
     fun <T : Any> save(property: Property<T>, value: T) = save(mapOf(property to value))
 
     @API
+    @Synchronized
     fun <T : Any> save(properties: Map<Property<T>, T>) {
         for ((property, value) in properties) {
             set(property, value)
@@ -59,6 +64,7 @@ open class YamlFile(@API val properties: SettingsHolder, file: File) : DataFile(
     }
 
     @API
+    @Synchronized
     override fun save() {
         super.save()
         manager.save()
