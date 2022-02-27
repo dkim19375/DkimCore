@@ -133,11 +133,11 @@ publishing {
 
                 scm {
                     //noinspection GroovyAssignabilityCheck
-                    connection = 'scm:git:git://github.com/dkim19375/dkim19375JDAUtils.git'
+                    connection = 'scm:git:git://github.com/dkim19375/DkimCore.git'
                     //noinspection GroovyAssignabilityCheck
-                    developerConnection = 'scm:git:ssh://github.com:dkim19375/dkim19375JDAUtils.git'
+                    developerConnection = 'scm:git:ssh://github.com:dkim19375/DkimCore.git'
                     //noinspection GroovyAssignabilityCheck
-                    url = 'https://github.com/dkim19375/dkim19375JDAUtils'
+                    url = 'https://github.com/dkim19375/DkimCore'
                 }
             }
         }
