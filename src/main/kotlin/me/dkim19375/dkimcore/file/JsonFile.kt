@@ -59,17 +59,19 @@ open class JsonFile<T : Any>(
 
     init {
         path.createFileAndDirs()
+        var save = false
         current = AtomicReference(try {
             path.reader().use { gson.fromJson(it, type.java) }
         } catch (t: Throwable) {
             t.printStackTrace()
             null
         } ?: run {
-            val new = default()
-            set(new)
-            save()
-            new
+            save = true
+            default()
         })
+        if (save) {
+            save()
+        }
     }
 
     open fun get(): T = current.get()
@@ -102,7 +104,7 @@ open class JsonFile<T : Any>(
     override fun save() {
         super.save()
         path.writer().use {
-            gson.toJson(current, type.java, it)
+            gson.toJson(current.get(), type.java, it)
         }
     }
 }
