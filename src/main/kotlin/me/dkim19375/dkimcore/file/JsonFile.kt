@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.createFileAndDirs
 import java.io.File
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.reader
 import kotlin.io.path.writer
 import kotlin.reflect.KClass
@@ -54,11 +55,11 @@ open class JsonFile<T : Any>(
         }.create(),
 ) : DataFile(file) {
 
-    private var current: T
+    private val current: AtomicReference<T>
 
     init {
         path.createFileAndDirs()
-        current = try {
+        current = AtomicReference(try {
             path.reader().use { gson.fromJson(it, type.java) }
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -68,21 +69,17 @@ open class JsonFile<T : Any>(
             set(new)
             save()
             new
-        }
+        })
     }
 
-    @Synchronized
-    open fun get(): T = current
+    open fun get(): T = current.get()
 
-    @Synchronized
-    open fun set(obj: T) {
-        current = obj
-    }
+    open fun set(obj: T) = current.set(obj)
 
     @Synchronized
     override fun reload() {
         super.reload()
-        current = try {
+        current.set(try {
             path.reader().use { gson.fromJson(it, type.java) }
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -92,7 +89,7 @@ open class JsonFile<T : Any>(
             set(new)
             save()
             new
-        }
+        })
     }
 
     @Synchronized
