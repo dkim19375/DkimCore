@@ -24,6 +24,7 @@
 
 package me.dkim19375.dkimcore.extension
 
+import me.dkim19375.dkimcore.annotation.API
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
@@ -40,3 +41,12 @@ fun Double.setDecimalPlaces(amount: Int?): Double {
         (this * pow).roundToLong() / pow
     }
 }
+
+@API
+fun Long.getPercentage(max: Long): Long = this * 100 / max
+
+@API
+fun Double.getPercentage(max: Double): Double = this * 100 / max
+
+@API
+fun Number.percentChance(): Boolean = Math.random() * 100 <= toDouble()

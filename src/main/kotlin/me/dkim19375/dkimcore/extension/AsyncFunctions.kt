@@ -24,6 +24,9 @@
 
 package me.dkim19375.dkimcore.extension
 
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.async.ActionConsumer
+import me.dkim19375.dkimcore.async.ExecutorsConsumer
 import java.util.concurrent.*
 
 fun <T> Future<T>.getResult(timeout: Long? = null, unit: TimeUnit = TimeUnit.MILLISECONDS): Result<T> = runCatching {
@@ -45,3 +48,35 @@ fun <T> Future<T>.getResult(timeout: Long? = null, unit: TimeUnit = TimeUnit.MIL
     }
     Result.success(oldResult.getOrThrow())
 }
+
+@API
+fun <T> runWithTimeout(
+    timeout: Long,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    task: () -> T
+): T = consumer(task).completeWithTimeout(timeout, unit)
+
+@API
+fun <T> runWithSafeTimeout(
+    timeout: Long,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    task: () -> T
+): T? = consumer(task).completeWithSafeTimeout(timeout, unit)
+
+@API
+suspend fun <T> awaitWithTimeout(
+    timeout: Long,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    task: () -> T
+): T = consumer(task).awaitWithTimeout(timeout, unit)
+
+@API
+suspend fun <T> awaitWithSafeTimeout(
+    timeout: Long,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    task: () -> T
+): T? = consumer(task).awaitWithSafeTimeout(timeout, unit)

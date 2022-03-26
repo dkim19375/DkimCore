@@ -29,6 +29,13 @@ import kotlin.test.*
 private const val BEFORE_FLOAT = 1.2345678f
 private const val BEFORE = 1.23456789
 
+private const val FIFTH_LONG = 6L
+private const val FIFTH_DOUBLE = 6.5
+private const val FULL_LONG = FIFTH_LONG * 5
+private const val FULL_DOUBLE = FIFTH_DOUBLE * 5
+private const val FIFTH_PERCENT_LONG = 100L / 5
+private const val FIFTH_PERCENT_DOUBLE = FIFTH_PERCENT_LONG.toDouble()
+
 class PrimitiveFunctionsTest {
     @Test
     fun `Float decimal places`() {
@@ -56,5 +63,11 @@ class PrimitiveFunctionsTest {
                         "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}"
             )
         }
+    }
+
+    @Test
+    fun `Get percentage`() {
+        assertEquals(FIFTH_LONG.getPercentage(FULL_LONG), FIFTH_PERCENT_LONG)
+        assertEquals(FIFTH_DOUBLE.getPercentage(FULL_DOUBLE), FIFTH_PERCENT_DOUBLE)
     }
 }

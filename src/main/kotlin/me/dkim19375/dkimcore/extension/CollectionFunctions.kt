@@ -39,8 +39,11 @@ fun Map<String, *>.containsIgnoreCase(find: String): Boolean = getIgnoreCase(fin
 fun Iterable<String>.getIgnoreCase(find: String): String? = firstOrNull { it.equals(find, ignoreCase = true) }
 
 @API
-fun <V> Map<String, V>.getIgnoreCase(find: String): V? = entries.firstOrNull {
-    it.key.equals(find, ignoreCase = true)
+fun <V> Map<String, V>.getIgnoreCase(find: String): V? = this[find, true]
+
+@API
+operator fun <V> Map<String, V>.get(other: String, ignoreCase: Boolean = false): V? = entries.firstOrNull {
+    it.key.equals(other, ignoreCase = ignoreCase)
 }?.value
 
 @API
