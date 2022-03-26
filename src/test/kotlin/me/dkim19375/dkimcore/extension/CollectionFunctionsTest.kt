@@ -33,8 +33,6 @@ private val STRING_LIST: List<String> = listOf("a", "B", "c")
 private val STRING_SET: Set<String> = setOf("a", "b", "c")
 private val STRING_MAP: Map<String, String> = mapOf("a" to "b", "c" to "d")
 private val UUID_LIST: List<UUID> = (1..10).map { UUID.randomUUID() }
-private val LIST_LIST: List<List<Int>> = listOf(listOf(1, 2, 3), listOf(4, 5, 6))
-private val EXPECTED_LIST: List<Int> = listOf(1, 2, 3, 4, 5, 6)
 private val MAP_LIST: List<Map<Int, Int>> = listOf(mapOf(1 to 2, 3 to 4), mapOf(5 to 6, 7 to 8))
 private val EXPECTED_MAP: Map<Int, Int> = mapOf(1 to 2, 3 to 4, 5 to 6, 7 to 8)
 private val UNSPLIT_LIST: List<Int> = (1..20).toList()
@@ -86,13 +84,13 @@ class CollectionFunctionsTest {
     }
 
     @Test
-    fun `Combine list`() {
-        assertContentEquals(LIST_LIST.combine(), EXPECTED_LIST)
+    fun `Get key from value in map`() {
+        assertEquals(STRING_MAP.getKey(STRING_MAP.getValue("a")), "a")
     }
 
     @Test
-    fun `Combine map`() {
-        assertEquals(MAP_LIST.combine(), EXPECTED_MAP)
+    fun `Flatten map list`() {
+        assertEquals(MAP_LIST.flatten(), EXPECTED_MAP)
     }
 
     @Test

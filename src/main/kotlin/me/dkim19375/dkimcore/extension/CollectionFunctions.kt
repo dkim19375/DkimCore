@@ -64,14 +64,10 @@ fun Collection<UUID>.getRandomUUID(): UUID {
 }
 
 @API
-fun <T> Collection<Collection<T>>.combine(): List<T> =
-    fold(mutableListOf()) { list: MutableList<T>, collection: Collection<T> ->
-        list.addAll(collection)
-        return@fold list
-    }
+fun <K, V> Map<K, V>.getKey(value: V): K? = entries.firstOrNull { it.value == value }?.key
 
 @API
-fun <K, V> Collection<Map<K, V>>.combine(): Map<K, V> =
+fun <K, V> Collection<Map<K, V>>.flatten(): Map<K, V> =
     fold(mutableMapOf()) { map: MutableMap<K, V>, collection: Map<K, V> ->
         map.putAll(collection)
         return@fold map
