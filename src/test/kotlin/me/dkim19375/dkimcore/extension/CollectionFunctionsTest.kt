@@ -79,19 +79,13 @@ class CollectionFunctionsTest {
     }
 
     @Test
-    fun `Get random UUID`() {
-        assertFalse(UUID_LIST.getRandomUUID() in UUID_LIST)
-    }
+    fun `Get random UUID`() = assertFalse(UUID_LIST.getRandomUUID() in UUID_LIST)
 
     @Test
-    fun `Get key from value in map`() {
-        assertEquals(STRING_MAP.getKey(STRING_MAP.getValue("a")), "a")
-    }
+    fun `Get key from value in map`() = assertEquals(STRING_MAP.getKey(STRING_MAP.getValue("a")), "a")
 
     @Test
-    fun `Flatten map list`() {
-        assertEquals(MAP_LIST.flatten(), EXPECTED_MAP)
-    }
+    fun `Flatten map list`() = assertEquals(MAP_LIST.flatten(), EXPECTED_MAP)
 
     @Test
     fun `Immutable set`() {
@@ -136,32 +130,26 @@ class CollectionFunctionsTest {
     }
 
     @Test
-    fun `Concurrent set`() {
-        assertDoesNotThrow {
-            val set = concurrentSetOf(1, 2, 3)
-            for (i in set) {
-                set.remove(i)
-            }
+    fun `Concurrent set`() = assertDoesNotThrow {
+        val set = concurrentSetOf(1, 2, 3)
+        for (i in set) {
+            set.remove(i)
         }
     }
 
     @Test
-    fun `Concurrent Deque`() {
-        assertDoesNotThrow {
-            val deque = listOf(1, 2, 3).toConcurrentDeque()
-            for (i in deque) {
-                deque.remove(i)
-            }
+    fun `Concurrent Deque`() = assertDoesNotThrow {
+        val deque = listOf(1, 2, 3).toConcurrentDeque()
+        for (i in deque) {
+            deque.remove(i)
         }
     }
 
     @Test
-    fun `Concurrent map`() {
-        assertDoesNotThrow {
-            val map = mapOf(1 to 2, 3 to 4, 5 to 6).toConcurrentMap()
-            for (i in map) {
-                map.remove(i.key)
-            }
+    fun `Concurrent map`() = assertDoesNotThrow {
+        val map = mapOf(1 to 2, 3 to 4, 5 to 6).toConcurrentMap()
+        for (i in map) {
+            map.remove(i.key)
         }
     }
 
@@ -173,7 +161,5 @@ class CollectionFunctionsTest {
     }
 
     @Test
-    fun `Split list with limit`() {
-        assertContentEquals(UNSPLIT_LIST.split(6, 3), SPLIT_LIMITED_LIST)
-    }
+    fun `Split list with limit`() = assertContentEquals(UNSPLIT_LIST.split(6, 3), SPLIT_LIMITED_LIST)
 }

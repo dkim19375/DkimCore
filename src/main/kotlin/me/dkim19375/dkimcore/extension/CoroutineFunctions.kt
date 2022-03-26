@@ -27,7 +27,6 @@ package me.dkim19375.dkimcore.extension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeout
 import me.dkim19375.dkimcore.annotation.API
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.Continuation
@@ -35,7 +34,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+@API
 val SCOPE: CoroutineScope by lazy { CoroutineScope(Dispatchers.Default) }
+@API
 val IO_SCOPE: CoroutineScope by lazy { CoroutineScope(Dispatchers.IO) }
 
 @API

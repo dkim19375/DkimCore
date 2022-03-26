@@ -29,7 +29,8 @@ import me.dkim19375.dkimcore.extension.getResult
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
-import kotlin.test.*
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 internal class ActionConsumerTest {
     private fun <T> getConsumers(task: () -> T): Set<ActionConsumer<T>> = setOf(
@@ -40,22 +41,20 @@ internal class ActionConsumerTest {
     class ConsumerException : RuntimeException()
 
     @Test
-    fun `Test exception handling`() {
-        getConsumers {
-            throw ConsumerException()
-        }.forEach { consumer ->
-            assertFailsWith(ConsumerException::class, "Submit failed (type: ${consumer::class.simpleName})") {
-                consumer.submit().getResult().exceptionOrNull()?.let {
-                    throw it
-                }
+    fun `Test exception handling`() = getConsumers {
+        throw ConsumerException()
+    }.forEach { consumer ->
+        assertFailsWith(ConsumerException::class, "Submit failed (type: ${consumer::class.simpleName})") {
+            consumer.submit().getResult().exceptionOrNull()?.let {
+                throw it
             }
-            assertFailsWith(ConsumerException::class, "Complete failed (type: ${consumer::class.simpleName})") {
-                consumer.complete()
-            }
-            runBlocking {
-                assertFailsWith(ConsumerException::class, "Await failed (type: ${consumer::class.simpleName})") {
-                    consumer.await()
-                }
+        }
+        assertFailsWith(ConsumerException::class, "Complete failed (type: ${consumer::class.simpleName})") {
+            consumer.complete()
+        }
+        runBlocking {
+            assertFailsWith(ConsumerException::class, "Await failed (type: ${consumer::class.simpleName})") {
+                consumer.await()
             }
         }
     }

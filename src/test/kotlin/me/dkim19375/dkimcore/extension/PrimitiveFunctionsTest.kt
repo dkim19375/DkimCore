@@ -26,14 +26,13 @@ package me.dkim19375.dkimcore.extension
 
 import kotlin.test.*
 
-private const val BEFORE_FLOAT = 1.23456789f
+private const val BEFORE_FLOAT = 1.2345678f
 private const val BEFORE = 1.23456789
-private val TESTS = (1..8).toList()
 
 class PrimitiveFunctionsTest {
     @Test
     fun `Float decimal places`() {
-        for (test in TESTS) {
+        for (test in 1 until BEFORE_FLOAT.toString().last().digitToInt()) {
             assertTrue(
                 actual = BEFORE_FLOAT.setDecimalPlaces(test).toString()
                     .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()),
@@ -46,7 +45,7 @@ class PrimitiveFunctionsTest {
 
     @Test
     fun `Double decimal places`() {
-        for (test in TESTS) {
+        for (test in 1 until BEFORE.toString().last().digitToInt()) {
             assertTrue(
                 actual = BEFORE.setDecimalPlaces(test).toString()
                     .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()),
