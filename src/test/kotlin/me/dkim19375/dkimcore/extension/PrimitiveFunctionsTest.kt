@@ -32,26 +32,28 @@ private const val BEFORE = 1.23456789
 class PrimitiveFunctionsTest {
     @Test
     fun `Float decimal places`() {
-        for (test in 1 until BEFORE_FLOAT.toString().last().digitToInt()) {
+        val last = BEFORE_FLOAT.toString().last().digitToInt() - 1
+        for (test in 1 until last + 1) {
             assertTrue(
                 actual = BEFORE_FLOAT.setDecimalPlaces(test).toString()
-                    .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()),
+                    .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
                 message = "Decimal places: $test. " +
                         "Result: ${BEFORE_FLOAT.setDecimalPlaces(test)}. " +
-                        "Expected (ends with): ${test + if (test >= 3 && test != 8) 2 else 1}"
+                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}"
             )
         }
     }
 
     @Test
     fun `Double decimal places`() {
-        for (test in 1 until BEFORE.toString().last().digitToInt()) {
+        val last = BEFORE.toString().last().digitToInt() - 1
+        for (test in 1 until last + 1) {
             assertTrue(
                 actual = BEFORE.setDecimalPlaces(test).toString()
-                    .endsWith((test + if (test >= 3 && test != 8) 2 else 1).toString()),
+                    .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
                 message = "Decimal places: $test. " +
                         "Result: ${BEFORE.setDecimalPlaces(test)}. " +
-                        "Expected (ends with): ${test + if (test >= 3 && test != 8) 2 else 1}"
+                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}"
             )
         }
     }
