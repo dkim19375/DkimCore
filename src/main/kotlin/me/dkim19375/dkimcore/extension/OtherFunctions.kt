@@ -27,7 +27,7 @@ package me.dkim19375.dkimcore.extension
 import me.dkim19375.dkimcore.annotation.API
 
 @API
-inline fun <reified T>typedNull(): T? = null
+inline fun <reified T> typedNull(): T? = null
 
 fun <T> runCatchingOrNull(action: () -> T?): T? = try {
     action()
