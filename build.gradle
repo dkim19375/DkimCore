@@ -44,7 +44,9 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
     compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
+
     api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21'
     //noinspection GradlePackageUpdate
     api('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1') {

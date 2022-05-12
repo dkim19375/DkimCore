@@ -27,7 +27,12 @@ package me.dkim19375.dkimcore.extension
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.async.ActionConsumer
 import me.dkim19375.dkimcore.async.ExecutorsConsumer
+import me.dkim19375.dkimcore.delegate.AtomicDelegate
 import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 fun <T> Future<T>.getResult(timeout: Long? = null, unit: TimeUnit = TimeUnit.MILLISECONDS): Result<T> = runCatching {
     if (timeout != null) {
@@ -54,7 +59,7 @@ fun <T> runWithTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
     consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
-    task: () -> T
+    task: () -> T,
 ): T = consumer(task).completeWithTimeout(timeout, unit)
 
 @API
@@ -62,7 +67,7 @@ fun <T> runWithSafeTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
     consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
-    task: () -> T
+    task: () -> T,
 ): T? = consumer(task).completeWithSafeTimeout(timeout, unit)
 
 @API
@@ -70,7 +75,7 @@ suspend fun <T> awaitWithTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
     consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
-    task: () -> T
+    task: () -> T,
 ): T = consumer(task).awaitWithTimeout(timeout, unit)
 
 @API
@@ -78,5 +83,33 @@ suspend fun <T> awaitWithSafeTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
     consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
-    task: () -> T
+    task: () -> T,
 ): T? = consumer(task).awaitWithSafeTimeout(timeout, unit)
+
+@API
+fun atomicBoolean(initialValue: Boolean = false) = AtomicDelegate(
+    atomicInstance = AtomicBoolean(initialValue),
+    getter = AtomicBoolean::get,
+    setter = { atomic, value -> atomic.set(value) },
+)
+
+@API
+fun atomicInteger(initialValue: Int = 0) = AtomicDelegate(
+    atomicInstance = AtomicInteger(initialValue),
+    getter = AtomicInteger::get,
+    setter = { atomic, value -> atomic.set(value) },
+)
+
+@API
+fun atomicLong(initialValue: Long = 0L) = AtomicDelegate(
+    atomicInstance = AtomicLong(initialValue),
+    getter = AtomicLong::get,
+    setter = { atomic, value -> atomic.set(value) },
+)
+
+@API
+fun <T> atomicReference(initialValue: T? = null) = AtomicDelegate<AtomicReference<T>, T>(
+    atomicInstance = AtomicReference(initialValue),
+    getter = AtomicReference<T>::get,
+    setter = { atomic, value -> atomic.set(value) },
+)
