@@ -26,6 +26,8 @@ package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
 import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.createDirectories
@@ -60,3 +62,10 @@ fun String.toFile(): File {
 
 @API
 fun String.toPath(): Path = toFile().toPath()
+
+@API
+fun String.toURL(): Result<URL> = try {
+    Result.success(URL(this))
+} catch (ex: MalformedURLException) {
+    Result.failure(ex)
+}
