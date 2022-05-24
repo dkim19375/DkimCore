@@ -50,3 +50,8 @@ fun <T> getMillisLongAndValue(function: () -> T): Pair<Long, T> {
     val end = System.currentTimeMillis()
     return (end - start) to value
 }
+
+@API
+inline fun <reified T : Enum<T>> enumValueOfOrNull(str: String): T? = runCatchingOrNull {
+    enumValueOf<T>(str.uppercase())
+}
