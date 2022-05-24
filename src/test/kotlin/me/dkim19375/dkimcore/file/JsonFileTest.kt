@@ -80,8 +80,8 @@ class JsonFileTest {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(TestClass::class, TEST_FILE)
-        assertEquals(file.get().value1, VALUE_1)
-        assertEquals(file.get().value2, VALUE_2)
+        assertEquals(VALUE_1, file.get().value1)
+        assertEquals(VALUE_2, file.get().value2)
     }
 
     @Test
@@ -94,21 +94,21 @@ class JsonFileTest {
         test.value1 = VALUE_1_ALT
         test.value2 = VALUE_2_ALT
         file.set(test)
-        assertEquals(file.get().value1, VALUE_1_ALT)
-        assertEquals(file.get().value2, VALUE_2_ALT)
-        assertNotEquals(file2.get().value1, VALUE_1_ALT)
-        assertNotEquals(file2.get().value2, VALUE_2_ALT)
+        assertEquals(VALUE_1_ALT, file.get().value1)
+        assertEquals(VALUE_2_ALT, file.get().value2)
+        assertNotEquals(VALUE_1_ALT, file2.get().value1)
+        assertNotEquals(VALUE_2_ALT, file2.get().value2)
         file2.reload()
-        assertNotEquals(file2.get().value1, VALUE_1_ALT)
-        assertNotEquals(file2.get().value2, VALUE_2_ALT)
+        assertNotEquals(VALUE_1_ALT, file2.get().value1)
+        assertNotEquals(VALUE_2_ALT, file2.get().value2)
         file.save()
-        assertEquals(file.get().value1, VALUE_1_ALT)
-        assertEquals(file.get().value2, VALUE_2_ALT)
-        assertNotEquals(file2.get().value1, VALUE_1_ALT)
-        assertNotEquals(file2.get().value2, VALUE_2_ALT)
+        assertEquals(VALUE_1_ALT, file.get().value1)
+        assertEquals(VALUE_2_ALT, file.get().value2)
+        assertNotEquals(VALUE_1_ALT, file2.get().value1)
+        assertNotEquals(VALUE_2_ALT, file2.get().value2)
         file2.reload()
-        assertEquals(file2.get().value1, VALUE_1_ALT)
-        assertEquals(file2.get().value2, VALUE_2_ALT)
+        assertEquals(VALUE_1_ALT, file2.get().value1)
+        assertEquals(VALUE_2_ALT, file2.get().value2)
     }
 
     @Test
@@ -121,13 +121,13 @@ class JsonFileTest {
         test.value1 = VALUE_1_ALT
         test.value2 = VALUE_2_ALT
         file.save(test)
-        assertEquals(file.get().value1, VALUE_1_ALT)
-        assertEquals(file.get().value2, VALUE_2_ALT)
-        assertNotEquals(file2.get().value1, VALUE_1_ALT)
-        assertNotEquals(file2.get().value2, VALUE_2_ALT)
+        assertEquals(VALUE_1_ALT, file.get().value1)
+        assertEquals(VALUE_2_ALT, file.get().value2)
+        assertNotEquals(VALUE_1_ALT, file2.get().value1)
+        assertNotEquals(VALUE_2_ALT, file2.get().value2)
         file2.reload()
-        assertEquals(file2.get().value1, VALUE_1_ALT)
-        assertEquals(file2.get().value2, VALUE_2_ALT)
+        assertEquals(VALUE_1_ALT, file2.get().value1)
+        assertEquals(VALUE_2_ALT, file2.get().value2)
     }
 
 
@@ -137,8 +137,8 @@ class JsonFileTest {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(MapTestClass::class, TEST_FILE)
-        assertEquals(file.get().map1, VALUE_MAP_1)
-        assertEquals(file.get().map2, VALUE_MAP_2)
+        assertEquals(VALUE_MAP_1, file.get().map1)
+        assertEquals(VALUE_MAP_2, file.get().map2)
     }
 
     @Test
@@ -151,21 +151,21 @@ class JsonFileTest {
         test.map1 = VALUE_MAP_1_ALT
         test.map2 = VALUE_MAP_2_ALT
         file.set(test)
-        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
+        assertEquals(VALUE_MAP_1_ALT, file.get().map1)
         assertEquals(file.get().map2, VALUE_MAP_2_ALT)
-        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertNotEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertNotEquals(VALUE_MAP_2_ALT, file2.get().map2)
         file2.reload()
-        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertNotEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertNotEquals(VALUE_MAP_2_ALT, file2.get().map2)
         file.save()
-        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
-        assertEquals(file.get().map2, VALUE_MAP_2_ALT)
-        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertEquals(VALUE_MAP_1_ALT, file.get().map1)
+        assertEquals(VALUE_MAP_2_ALT, file.get().map2)
+        assertNotEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertNotEquals(VALUE_MAP_2_ALT, file2.get().map2)
         file2.reload()
-        assertEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertEquals(VALUE_MAP_2_ALT, file2.get().map2)
     }
 
     @Test
@@ -178,12 +178,12 @@ class JsonFileTest {
         test.map1 = VALUE_MAP_1_ALT
         test.map2 = VALUE_MAP_2_ALT
         file.save(test)
-        assertEquals(file.get().map1, VALUE_MAP_1_ALT)
-        assertEquals(file.get().map2, VALUE_MAP_2_ALT)
-        assertNotEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertNotEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertEquals(VALUE_MAP_1_ALT, file.get().map1)
+        assertEquals(VALUE_MAP_2_ALT, file.get().map2)
+        assertNotEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertNotEquals(VALUE_MAP_2_ALT, file2.get().map2)
         file2.reload()
-        assertEquals(file2.get().map1, VALUE_MAP_1_ALT)
-        assertEquals(file2.get().map2, VALUE_MAP_2_ALT)
+        assertEquals(VALUE_MAP_1_ALT, file2.get().map1)
+        assertEquals(VALUE_MAP_2_ALT, file2.get().map2)
     }
 }

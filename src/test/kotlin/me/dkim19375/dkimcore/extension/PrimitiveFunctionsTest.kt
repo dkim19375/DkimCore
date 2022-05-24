@@ -67,7 +67,7 @@ class PrimitiveFunctionsTest {
 
     @Test
     fun `Get percentage`() {
-        assertEquals(FIFTH_LONG.getPercentage(FULL_LONG), FIFTH_PERCENT_LONG)
-        assertEquals(FIFTH_DOUBLE.getPercentage(FULL_DOUBLE), FIFTH_PERCENT_DOUBLE)
+        assertEquals(FIFTH_PERCENT_LONG, FIFTH_LONG.getPercentage(FULL_LONG))
+        assertEquals(FIFTH_PERCENT_DOUBLE, FIFTH_DOUBLE.getPercentage(FULL_DOUBLE))
     }
 }

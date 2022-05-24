@@ -60,7 +60,7 @@ internal class YamlFileTest {
     @Test
     fun `Get property`() {
         val file = YamlFile(SettingsHolderTesting, TEST_FILE)
-        assertEquals(file.get(SettingsHolderTesting.PROPERTY), DEFAULT_VALUE)
+        assertEquals(DEFAULT_VALUE, file.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 
@@ -69,7 +69,7 @@ internal class YamlFileTest {
         val file = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
-        assertEquals(file.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
+        assertEquals(OTHER_VALUE, file.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 
@@ -79,7 +79,7 @@ internal class YamlFileTest {
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
         val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
-        assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
+        assertEquals(OTHER_VALUE, newFile.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 
@@ -89,7 +89,7 @@ internal class YamlFileTest {
         val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
-        assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), DEFAULT_VALUE)
+        assertEquals(DEFAULT_VALUE, newFile.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 
@@ -100,7 +100,7 @@ internal class YamlFileTest {
         file.set(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         file.save()
         newFile.reload()
-        assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
+        assertEquals(OTHER_VALUE, newFile.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 
@@ -110,7 +110,7 @@ internal class YamlFileTest {
         val newFile = YamlFile(SettingsHolderTesting, TEST_FILE)
         file.save(SettingsHolderTesting.PROPERTY, OTHER_VALUE)
         newFile.reload()
-        assertEquals(newFile.get(SettingsHolderTesting.PROPERTY), OTHER_VALUE)
+        assertEquals(OTHER_VALUE, newFile.get(SettingsHolderTesting.PROPERTY))
         file.file.delete()
     }
 }

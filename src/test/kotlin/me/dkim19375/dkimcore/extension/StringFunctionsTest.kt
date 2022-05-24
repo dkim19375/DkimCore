@@ -46,34 +46,34 @@ class StringFunctionsTest {
     fun `toString to UUID`() {
         val value = TEST_UUID.toString().toUUID()
         assertNotNull(value)
-        assertEquals(value, TEST_UUID)
+        assertEquals(TEST_UUID, value)
     }
 
     @Test
     fun `UUID without dashes to UUID`() {
         val value = TEST_UUID.toString().replace("-", "").toUUID()
         assertNotNull(value)
-        assertEquals(value, TEST_UUID)
+        assertEquals(TEST_UUID, value)
     }
 
     @Test
     fun `UUID without dashes with spaces to UUID`() {
         val value = TEST_UUID.toString().replace("-", " ").toUUID()
         assertNotNull(value)
-        assertEquals(value, TEST_UUID)
+        assertEquals(TEST_UUID, value)
     }
 
     @Test
     fun `Set placeholders`() {
-        assertEquals(PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false), EXPECTED_PLACEHOLDER)
-        assertNotEquals(PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
-        assertEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS), EXPECTED_PLACEHOLDER)
-        assertNotEquals(PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false), EXPECTED_PLACEHOLDER)
-        assertEquals(CUSTOM_PLACEHOLDER_STR.setPlaceholders(
+        assertEquals(EXPECTED_PLACEHOLDER, PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false))
+        assertNotEquals(EXPECTED_PLACEHOLDER, PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS))
+        assertEquals(EXPECTED_PLACEHOLDER, PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS))
+        assertNotEquals(EXPECTED_PLACEHOLDER, PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false))
+        assertEquals("$EXPECTED_PLACEHOLDER (no_parse)", CUSTOM_PLACEHOLDER_STR.setPlaceholders(
             map = PLACEHOLDERS,
             prefix = "(",
             suffix = ")",
             escape = '*'
-        ), "$EXPECTED_PLACEHOLDER (no_parse)")
+        ))
     }
 }

@@ -61,15 +61,15 @@ class CollectionFunctionsTest {
 
     @Test
     fun `Get ignore case`() {
-        assertEquals(STRING_LIST.getIgnoreCase("a"), "a")
-        assertEquals(STRING_LIST.getIgnoreCase("b"), "B")
+        assertEquals("a", STRING_LIST.getIgnoreCase("a"))
+        assertEquals("B", STRING_LIST.getIgnoreCase("b"))
         assertNull(STRING_LIST.getIgnoreCase("d"))
-        assertEquals(STRING_MAP.getIgnoreCase("a"), "b")
-        assertEquals(STRING_MAP.getIgnoreCase("C"), "d")
-        assertNull(STRING_MAP.getIgnoreCase("d"))
+        assertEquals("b", STRING_MAP.getIgnoreCase("a"))
+        assertEquals("d", STRING_MAP.getIgnoreCase("C"))
+        assertNull("d", STRING_MAP.getIgnoreCase("d"))
 
-        assertEquals(STRING_MAP["a", true], "b")
-        assertEquals(STRING_MAP["C", true], "d")
+        assertEquals("b", STRING_MAP["a", true])
+        assertEquals("d", STRING_MAP["C", true])
         assertNull(STRING_MAP["C", false])
         assertNull(STRING_MAP["d", false])
     }
@@ -80,17 +80,17 @@ class CollectionFunctionsTest {
         map.removeIf { k, v ->
             k == "a" && v == "b"
         }
-        assertEquals(map, mapOf("c" to "d"))
+        assertEquals(mapOf("c" to "d"), map)
     }
 
     @Test
     fun `Get random UUID`() = assertFalse(UUID_LIST.getRandomUUID() in UUID_LIST)
 
     @Test
-    fun `Get key from value in map`() = assertEquals(STRING_MAP.getKey(STRING_MAP.getValue("a")), "a")
+    fun `Get key from value in map`() = assertEquals("a", STRING_MAP.getKey(STRING_MAP.getValue("a")))
 
     @Test
-    fun `Flatten map list`() = assertEquals(MAP_LIST.flatten(), EXPECTED_MAP)
+    fun `Flatten map list`() = assertEquals(EXPECTED_MAP, MAP_LIST.flatten())
 
     @Test
     fun `Immutable set`() {
