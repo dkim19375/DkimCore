@@ -66,7 +66,7 @@ class CollectionFunctionsTest {
         assertNull(STRING_LIST.getIgnoreCase("d"))
         assertEquals("b", STRING_MAP.getIgnoreCase("a"))
         assertEquals("d", STRING_MAP.getIgnoreCase("C"))
-        assertNull("d", STRING_MAP.getIgnoreCase("d"))
+        assertNull(STRING_MAP.getIgnoreCase("d"))
 
         assertEquals("b", STRING_MAP["a", true])
         assertEquals("d", STRING_MAP["C", true])
