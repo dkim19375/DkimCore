@@ -71,7 +71,7 @@ dependencies {
     testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
     testImplementation 'com.google.code.gson:gson:2.9.0'
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.6.21'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.7.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
