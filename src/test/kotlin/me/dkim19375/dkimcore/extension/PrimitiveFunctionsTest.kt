@@ -36,6 +36,37 @@ private const val FULL_DOUBLE = FIFTH_DOUBLE * 5
 private const val FIFTH_PERCENT_LONG = 100L / 5
 private const val FIFTH_PERCENT_DOUBLE = FIFTH_PERCENT_LONG.toDouble()
 
+@Suppress("SpellCheckingInspection")
+private val NUMERAL_MAP = mapOf(
+    1 to "I",
+    2 to "II",
+    4 to "IV",
+    5 to "V",
+    9 to "IX",
+    10 to "X",
+    12 to "XII",
+    36 to "XXXVI",
+    40 to "XL",
+    44 to "XLIV",
+    50 to "L",
+    72 to "LXXII",
+    89 to "LXXXIX",
+    90 to "XC",
+    95 to "XCV",
+    100 to "C",
+    321 to "CCCXXI",
+    400 to "CD",
+    422 to "CDXXII",
+    500 to "D",
+    623 to "DCXXIII",
+    900 to "CM",
+    913 to "CMXIII",
+    1000 to "M",
+    2000 to "MM",
+    3000 to "MMM",
+    3999 to "MMMCMXCIX",
+)
+
 class PrimitiveFunctionsTest {
     @Test
     fun `Float decimal places`() {
@@ -69,5 +100,14 @@ class PrimitiveFunctionsTest {
     fun `Get percentage`() {
         assertEquals(FIFTH_PERCENT_LONG, FIFTH_LONG.getPercentage(FULL_LONG))
         assertEquals(FIFTH_PERCENT_DOUBLE, FIFTH_DOUBLE.getPercentage(FULL_DOUBLE))
+    }
+
+    @Test
+    fun `Roman numeral`() {
+        for ((num, numeral) in NUMERAL_MAP) {
+            assertEquals(numeral, num.toRomanNumeral())
+        }
+        assertEquals("3000", 3000.toRomanNumeral(2999))
+        assertNotEquals("3000", 3000.toRomanNumeral(3000))
     }
 }

@@ -25,6 +25,7 @@
 package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
+import java.util.TreeMap
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
@@ -50,3 +51,30 @@ fun Double.getPercentage(max: Double): Double = this * 100 / max
 
 @API
 fun Number.percentChance(): Boolean = Math.random() * 100 <= toDouble()
+
+private val romanNumeralMap = TreeMap<Int, String>().apply {
+    put(1, "I")
+    put(4, "IV")
+    put(5, "V")
+    put(9, "IX")
+    put(10, "X")
+    put(40, "XL")
+    put(50, "L")
+    put(90, "XC")
+    put(100, "C")
+    put(400, "CD")
+    put(500, "D")
+    put(900, "CM")
+    put(1000, "M")
+}
+
+fun Int.toRomanNumeral(limit: Int = 3999): String {
+    if (this > limit || this > 3999) {
+        return toString()
+    }
+    val num = romanNumeralMap.floorKey(this)
+    if (this == num) {
+        return romanNumeralMap[num] ?: "0"
+    }
+    return romanNumeralMap[num] + (this - num).toRomanNumeral()
+}
