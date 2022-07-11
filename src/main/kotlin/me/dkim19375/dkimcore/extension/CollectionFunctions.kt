@@ -25,7 +25,11 @@
 package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
-import java.util.*
+import java.util.Collections
+import java.util.Deque
+import java.util.LinkedList
+import java.util.Queue
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 
@@ -145,3 +149,106 @@ fun <K, V> concurrentMapOf(vararg elements: Pair<K, V>): MutableMap<K, V> = mapO
 
 @API
 fun <K, V> concurrentMapOf(elements: Collection<Pair<K, V>>): MutableMap<K, V> = elements.toMap().toConcurrentMap()
+
+private fun <T, S : MutableCollection<T>> Iterable<*>.castType(
+    castTo: Class<T>,
+    name: String,
+    collectionInit: () -> S,
+): S {
+    if (this is Collection<*> && isEmpty()) {
+        return collectionInit()
+    }
+    val result = collectionInit()
+    for (item in this) {
+        if (castTo.isInstance(item)) {
+            result.add(castTo.cast(item))
+            continue
+        }
+        throw ClassCastException("Item ${item?.javaClass?.name} in $name cannot be cast to ${castTo.name}")
+    }
+    return result
+}
+
+private fun <T, S : MutableCollection<T>> Iterable<*>.castTypeSafe(
+    castTo: Class<T>,
+    collectionInit: () -> S,
+): S? {
+    if (this is Collection<*> && isEmpty()) {
+        return collectionInit()
+    }
+    val result = collectionInit()
+    for (item in this) {
+        if (castTo.isInstance(item)) {
+            result.add(castTo.cast(item))
+            continue
+        }
+        return null
+    }
+    return result
+}
+
+@API
+fun <T> Iterable<*>.castTypeCollection(castTo: Class<T>): Collection<T> = castType(castTo, "Iterable", ::arrayListOf)
+
+@API
+fun <T> Iterable<*>.castTypeCollectionSafe(castTo: Class<T>): Collection<T>? = castTypeSafe(castTo, ::arrayListOf)
+
+@API
+fun <T> List<*>.castType(castTo: Class<T>): List<T> = castType(castTo, "List", ::arrayListOf)
+
+@API
+fun <T> List<*>.castTypeSafe(castTo: Class<T>): List<T>? = castTypeSafe(castTo, ::arrayListOf)
+
+@API
+fun <T> Set<*>.castType(castTo: Class<T>): Set<T> = castType(castTo, "Set", ::hashSetOf)
+
+@API
+fun <T> Set<*>.castTypeSafe(castTo: Class<T>): Set<T>? = castTypeSafe(castTo, ::hashSetOf)
+
+@API
+fun <K, V> Map<*, *>.castType(castKeyTo: Class<K>, castValueTo: Class<V>): Map<K, V> {
+    if (isEmpty()) {
+        return hashMapOf()
+    }
+    val result = hashMapOf<K, V>()
+    for ((key, value) in this) {
+        if (!castKeyTo.isInstance(key)) {
+            throw ClassCastException("Item (key) ${key?.javaClass?.name} in Map cannot be cast to ${castKeyTo.name}")
+        }
+        if (!castValueTo.isInstance(value)) {
+            throw ClassCastException("Item (value) ${value?.javaClass?.name} in Map cannot be cast to ${castValueTo.name}")
+        }
+        result[castKeyTo.cast(key)] = castValueTo.cast(value)
+    }
+    return result
+}
+
+@API
+fun <K, V> Map<*, *>.castTypeSafe(castKeyTo: Class<K>, castValueTo: Class<V>): Map<K, V>? {
+    if (isEmpty()) {
+        return hashMapOf()
+    }
+    val result = hashMapOf<K, V>()
+    for ((key, value) in this) {
+        if (!castKeyTo.isInstance(key)) {
+            return null
+        }
+        if (!castValueTo.isInstance(value)) {
+            return null
+        }
+        result[castKeyTo.cast(key)] = castValueTo.cast(value)
+    }
+    return result
+}
+
+@API
+fun <T> Queue<*>.castType(castTo: Class<T>): Queue<T> = castType(castTo, "Queue", ::LinkedList)
+
+@API
+fun <T> Queue<*>.castTypeSafe(castTo: Class<T>): Queue<T>? = castTypeSafe(castTo, ::LinkedList)
+
+@API
+fun <T> Deque<*>.castType(castTo: Class<T>): Deque<T> = castType(castTo, "Deque") { java.util.ArrayDeque() }
+
+@API
+fun <T> Deque<*>.castTypeSafe(castTo: Class<T>): Deque<T>? = castTypeSafe(castTo) { java.util.ArrayDeque() }

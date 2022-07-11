@@ -26,12 +26,22 @@ package me.dkim19375.dkimcore.extension
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import java.util.*
-import kotlin.test.*
+import java.util.Deque
+import java.util.LinkedList
+import java.util.Queue
+import java.util.UUID
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 private val STRING_LIST: List<String> = listOf("a", "B", "c")
 private val STRING_SET: Set<String> = setOf("a", "b", "c")
 private val STRING_MAP: Map<String, String> = mapOf("a" to "b", "c" to "d")
+private val STRING_QUEUE: Queue<String> = LinkedList(listOf("A", "b", "c"))
+private val STRING_DEQUE: Deque<String> = java.util.ArrayDeque(listOf("A", "b", "c"))
 private val UUID_LIST: List<UUID> = (1..10).map { UUID.randomUUID() }
 private val MAP_LIST: List<Map<Int, Int>> = listOf(mapOf(1 to 2, 3 to 4), mapOf(5 to 6, 7 to 8))
 private val EXPECTED_MAP: Map<Int, Int> = mapOf(1 to 2, 3 to 4, 5 to 6, 7 to 8)
@@ -167,4 +177,38 @@ class CollectionFunctionsTest {
 
     @Test
     fun `Split list with limit`() = assertContentEquals(UNSPLIT_LIST.split(6, 3), SPLIT_LIMITED_LIST)
+
+    @Test
+    fun `Cast types of collections`() {
+        val stringIterable: Iterable<*> = STRING_LIST
+        assertThrows<ClassCastException> { stringIterable.castTypeCollection(Int::class.java) }
+        assertDoesNotThrow { stringIterable.castTypeCollection(String::class.java).first() }
+        assertNull(stringIterable.castTypeCollectionSafe(Int::class.java))
+        assertEquals(STRING_LIST, stringIterable.castTypeCollectionSafe(String::class.java))
+        val stringList: List<*> = STRING_LIST
+        assertThrows<ClassCastException> { stringList.castType(Int::class.java) }
+        assertDoesNotThrow { stringList.castType(String::class.java).first() }
+        assertNull(stringList.castTypeSafe(Int::class.java))
+        assertEquals(STRING_LIST, stringList.castTypeSafe(String::class.java))
+        val stringSet: Set<*> = STRING_SET
+        assertThrows<ClassCastException> { stringSet.castType(Int::class.java) }
+        assertDoesNotThrow { stringSet.castType(String::class.java).first() }
+        assertNull(stringSet.castTypeSafe(Int::class.java))
+        assertEquals(STRING_SET, stringSet.castTypeSafe(String::class.java))
+        val stringMap: Map<*, *> = STRING_MAP
+        assertThrows<ClassCastException> { stringMap.castType(Int::class.java, Int::class.java) }
+        assertDoesNotThrow { stringMap.castType(String::class.java, String::class.java).entries.first() }
+        assertNull(stringMap.castTypeSafe(Int::class.java, Int::class.java))
+        assertEquals(STRING_MAP, stringMap.castTypeSafe(String::class.java, String::class.java))
+        val stringQueue: Queue<*> = STRING_QUEUE
+        assertThrows<ClassCastException> { stringQueue.castType(Int::class.java) }
+        assertDoesNotThrow { stringQueue.castType(String::class.java).first() }
+        assertNull(stringQueue.castTypeSafe(Int::class.java))
+        assertEquals(STRING_QUEUE, stringQueue.castTypeSafe(String::class.java))
+        val stringDeque: Deque<*> = STRING_DEQUE
+        assertThrows<ClassCastException> { stringDeque.castType(Int::class.java) }
+        assertDoesNotThrow { stringDeque.castType(String::class.java).first() }
+        assertNull(stringDeque.castTypeSafe(Int::class.java))
+        assertEquals(STRING_DEQUE.toList(), stringDeque.castTypeSafe(String::class.java)?.toList())
+    }
 }
