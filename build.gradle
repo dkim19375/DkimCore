@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.7.10'
+    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.7.20'
     compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
 
     api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20'
