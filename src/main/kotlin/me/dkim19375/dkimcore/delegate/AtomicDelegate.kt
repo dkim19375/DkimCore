@@ -24,11 +24,15 @@
 
 package me.dkim19375.dkimcore.delegate
 
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+
 class AtomicDelegate<T, V>(
     private val atomicInstance: T,
     private val getter: (T) -> V,
     private val setter: (T, V) -> Unit,
-) : MutableDelegateTemplate<V>(
-    getValueAction = { _, _ -> getter(atomicInstance) },
-    setValueAction = { _, _, value -> setter(atomicInstance, value) },
-)
+) : ReadWriteProperty<Any?, V> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): V = getter(atomicInstance)
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) = setter(atomicInstance, value)
+}
