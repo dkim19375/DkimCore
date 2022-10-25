@@ -28,7 +28,7 @@ import java.io.File
 import java.nio.file.Paths
 import kotlin.test.*
 
-private val TEST_FILE: File = Paths.get("build", "tests", "test.yml").toFile()
+private val TEST_FILE: File = Paths.get("build", "tests", "test.json").toFile()
 private const val VALUE_1 = 1
 private const val VALUE_1_ALT = 5
 private const val VALUE_2 = "testing"
