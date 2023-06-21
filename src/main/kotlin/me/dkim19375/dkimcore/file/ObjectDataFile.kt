@@ -62,6 +62,7 @@ abstract class ObjectDataFile<T : Any>(
             )
         }
         readError = null
+        save()
     }
 
 

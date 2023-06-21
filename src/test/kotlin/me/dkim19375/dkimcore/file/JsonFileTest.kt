@@ -219,4 +219,14 @@ class JsonFileTest {
         }
         assertEquals(INVALID_DATA, TEST_FILE.readText())
     }
+
+    @Test
+    fun `Testing file saving on reload`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(TestClass::class, TEST_FILE)
+        TEST_FILE.writeText("")
+        file.reload()
+        assertNotEquals("", TEST_FILE.readText())
+    }
 }

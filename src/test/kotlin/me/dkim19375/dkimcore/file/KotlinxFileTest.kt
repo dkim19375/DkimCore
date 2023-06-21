@@ -210,4 +210,14 @@ class KotlinxFileTest {
         }
         assertEquals(INVALID_DATA, TEST_FILE.readText())
     }
+
+    @Test
+    fun `Testing file saving on reload`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        TEST_FILE.writeText("")
+        file.reload()
+        assertNotEquals("", TEST_FILE.readText())
+    }
 }
