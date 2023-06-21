@@ -17,7 +17,7 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding 'UTF-8'
 
 group 'me.dkim19375'
-version '1.4.0'
+version '1.4.1'
 
 //noinspection GrUnresolvedAccess
 compileKotlin.compilerOptions {
@@ -33,6 +33,7 @@ compileTestKotlin.compilerOptions {
 
 license {
     header = rootProject.file 'LICENSE'
+    skipExistingHeaders = true
     include '**/*.kt'
 }
 

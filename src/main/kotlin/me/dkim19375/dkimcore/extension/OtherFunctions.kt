@@ -25,6 +25,10 @@
 package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.isAccessible
 
 @API
 inline fun <reified T> typedNull(): T? = null
@@ -54,4 +58,18 @@ fun <T> getMillisLongAndValue(function: () -> T): Pair<Long, T> {
 @API
 inline fun <reified T : Enum<T>> enumValueOfOrNull(str: String): T? = runCatchingOrNull {
     enumValueOf<T>(str.uppercase())
+}
+
+fun <T : Any> KClass<T>.createInstance(): T {
+    val noArgsConstructor = constructors.filter { it.parameters.all(KParameter::isOptional) }.ifEmpty {
+        throw IllegalStateException("Class should have a single no-arg constructor: $this")
+    }
+
+    noArgsConstructor.singleOrNull(KFunction<T>::isAccessible)?.let {
+        return it.callBy(emptyMap())
+    }
+
+    return noArgsConstructor.single().apply {
+        isAccessible = true
+    }.callBy(emptyMap())
 }

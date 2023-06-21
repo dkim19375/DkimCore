@@ -27,20 +27,17 @@ package me.dkim19375.dkimcore.file
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.extension.createFileAndDirs
+import me.dkim19375.dkimcore.extension.createInstance
 import java.io.File
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.io.path.reader
-import kotlin.io.path.writer
 import kotlin.reflect.KClass
 
 open class JsonFile<T : Any>(
-    private val type: KClass<T>,
+    type: KClass<T>,
     file: File,
     prettyPrinting: Boolean = true,
     typeAdapters: Map<Class<*>, Any> = emptyMap(),
     complexMapSerialization: Boolean = true,
-    private val default: () -> T = { type.java.getDeclaredConstructor().newInstance() },
+    default: () -> T = type::createInstance,
     val extraGson: GsonBuilder.() -> GsonBuilder = { this },
     @API val gson: Gson = GsonBuilder()
         .apply {
@@ -53,58 +50,13 @@ open class JsonFile<T : Any>(
             typeAdapters.forEach(this::registerTypeHierarchyAdapter)
             extraGson()
         }.create(),
-) : DataFile(file) {
-
-    private val current: AtomicReference<T>
-
+) : ObjectDataFile<T>(file, type, default) {
     init {
-        path.createFileAndDirs()
-        var save = false
-        current = AtomicReference(try {
-            path.reader().use { gson.fromJson(it, type.java) }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            null
-        } ?: run {
-            save = true
-            default()
-        })
-        if (save) {
-            save()
-        }
-    }
-
-    open fun get(): T = current.get()
-
-    open fun set(obj: T) = current.set(obj)
-
-    @Synchronized
-    override fun reload() {
         super.reload()
-        current.set(try {
-            path.reader().use { gson.fromJson(it, type.java) }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            null
-        } ?: run {
-            val new = type.java.getDeclaredConstructor().newInstance()
-            set(new)
-            save()
-            new
-        })
-    }
-
-    @Synchronized
-    open fun save(obj: T) {
-        set(obj)
-        save()
-    }
-
-    @Synchronized
-    override fun save() {
         super.save()
-        path.writer().use {
-            gson.toJson(current.get(), type.java, it)
-        }
     }
+
+    override fun deserialize(text: String): T = gson.fromJson(text, type.java)
+
+    override fun serialize(obj: T): String = gson.toJson(obj, type.java)
 }

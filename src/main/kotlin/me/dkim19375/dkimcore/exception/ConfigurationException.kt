@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,6 @@
  * SOFTWARE.
  */
 
-package me.dkim19375.dkimcore.file
+package me.dkim19375.dkimcore.exception
 
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.StringFormat
-import me.dkim19375.dkimcore.extension.createInstance
-import java.io.File
-import kotlin.reflect.KClass
-
-open class KotlinxFile<T : Any>(
-    type: KClass<T>,
-    private val format: StringFormat,
-    serializer: KSerializer<T>,
-    file: File,
-    private val serializationStrategy: SerializationStrategy<T> = serializer,
-    private val deserializationStrategy: DeserializationStrategy<T> = serializer,
-    default: () -> T = type::createInstance,
-) : ObjectDataFile<T>(file, type, default) {
-    init {
-        super.reload()
-        super.save()
-    }
-
-    override fun deserialize(text: String): T = format.decodeFromString(deserializationStrategy, text)
-
-    override fun serialize(obj: T): String = format.encodeToString(serializationStrategy, obj)
-}
+class ConfigurationException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)

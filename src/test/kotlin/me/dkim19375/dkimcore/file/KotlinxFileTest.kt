@@ -26,10 +26,13 @@ package me.dkim19375.dkimcore.file
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable
+import me.dkim19375.dkimcore.exception.ConfigurationException
+import me.dkim19375.dkimcore.extension.createFileAndDirs
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
@@ -43,6 +46,9 @@ private val VALUE_MAP_1 = mapOf(1 to 2, 3 to 4)
 private val VALUE_MAP_1_ALT = mapOf(4 to 5, 6 to 7)
 private val VALUE_MAP_2 = mapOf("key #1-1" to "value #1-1", "key #1-2" to "value #1-2")
 private val VALUE_MAP_2_ALT = mapOf("key #2-1" to "value #2-1", "key #2-2" to "value #2-2")
+private val INVALID_DATA = """
+    This is not valid data: [}
+""".trimIndent()
 
 class KotlinxFileTest {
     @Serializable
@@ -180,5 +186,28 @@ class KotlinxFileTest {
         file2.reload()
         assertEquals(VALUE_MAP_1_ALT, file2.get().map1)
         assertEquals(VALUE_MAP_2_ALT, file2.get().map2)
+    }
+
+    @Test
+    fun `Testing error handling`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        TEST_FILE.createFileAndDirs()
+        TEST_FILE.writeText(INVALID_DATA)
+        assertEquals(INVALID_DATA, TEST_FILE.readText())
+        assertFailsWith<ConfigurationException> {
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        }
+        TEST_FILE.writeText("")
+        val file = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        TEST_FILE.writeText(INVALID_DATA)
+        assertEquals(INVALID_DATA, TEST_FILE.readText())
+        assertFailsWith<ConfigurationException> {
+            file.reload()
+        }
+        assertFailsWith<ConfigurationException> {
+            file.save()
+        }
+        assertEquals(INVALID_DATA, TEST_FILE.readText())
     }
 }
