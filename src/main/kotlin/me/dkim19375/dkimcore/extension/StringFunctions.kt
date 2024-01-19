@@ -27,9 +27,11 @@
 package me.dkim19375.dkimcore.extension
 
 import me.dkim19375.dkimcore.annotation.API
+import org.apache.commons.lang3.text.StrLookup
 import org.apache.commons.lang3.text.StrSubstitutor
 import org.apache.commons.text.StringSubstitutor
-import java.util.*
+import org.apache.commons.text.lookup.StringLookup
+import java.util.UUID
 
 private val usesLang3 = runCatchingOrNull { Class.forName("org.apache.commons.lang3.StringUtils") } != null
 private val usesApacheText = runCatchingOrNull { Class.forName("org.apache.commons.text.WordUtils") } != null
@@ -85,25 +87,34 @@ fun String.setPlaceholders(map: Map<String, String>, wrapPercent: Boolean = true
  * @return The String with its placeholders replaced
  */
 @API
-fun String.setPlaceholders(map: Map<String, String>, prefix: String, suffix: String, escape: Char = '0'): String {
-    val slowest = {
+fun String.setPlaceholders(
+    map: Map<String, String>,
+    prefix: String,
+    suffix: String,
+    escape: Char = '0',
+): String = when {
+    usesApacheText && prefix.isNotEmpty() && suffix.isNotEmpty() -> StringSubstitutor(object : StringLookup {
+        override fun lookup(key: String?): String? {
+            key ?: return null
+            return map[key]
+        }
+    }, prefix, suffix, escape).replace(this)
+
+    usesLang3 && prefix.isNotEmpty() && suffix.isNotEmpty() -> StrSubstitutor(object : StrLookup<String>() {
+        override fun lookup(key: String?): String? {
+            key ?: return null
+            return map[key]
+        }
+    }, prefix, suffix, escape).replace(this)
+
+    else -> {
         var new = this
-        for ((text, replacement) in map) {
-            new = new.replace(if (prefix.isEmpty() && suffix.isEmpty()) text else "$prefix$text$suffix", replacement)
+        for (entry in map) {
+            val find = if (prefix.isEmpty() && suffix.isEmpty()) entry.key else "$prefix${entry.key}$suffix"
+            if (find in new) {
+                new = new.replace(find, entry.value)
+            }
         }
         new
-    }
-    return when {
-        usesApacheText -> if (prefix.isEmpty() || suffix.isEmpty()) {
-            slowest()
-        } else {
-            StringSubstitutor(map, prefix, suffix, escape).replace(this)
-        }
-        usesLang3 -> if (prefix.isEmpty() || suffix.isEmpty()) {
-            slowest()
-        } else {
-            StrSubstitutor(map, prefix, suffix, escape).replace(this)
-        }
-        else -> slowest()
     }
 }
