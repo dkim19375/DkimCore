@@ -59,7 +59,7 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin'
     }
     //noinspection GradlePackageUpdate
-    api('org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3') {
+    api('org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.0') {
         exclude group: 'org.jetbrains.kotlin'
         exclude module: 'kotlinx-coroutines-core'
     }
