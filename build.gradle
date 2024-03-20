@@ -49,7 +49,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.charleskorn.kaml:kaml:0.57.0'
+    compileOnly 'com.charleskorn.kaml:kaml:0.58.0'
     compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.9.23'
     compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
 
@@ -73,7 +73,7 @@ dependencies {
 
     // testing libs
     testImplementation 'commons-io:commons-io:2.15.1'
-    testImplementation 'com.charleskorn.kaml:kaml:0.57.0'
+    testImplementation 'com.charleskorn.kaml:kaml:0.58.0'
     testImplementation 'org.apache.commons:commons-lang3:3.14.0'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.23'
     testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
