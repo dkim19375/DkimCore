@@ -50,10 +50,10 @@ repositories {
 
 dependencies {
     compileOnly 'com.charleskorn.kaml:kaml:0.59.0'
-    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.9.24'
+    compileOnly 'org.jetbrains.kotlin:kotlin-reflect:1.9.25'
     compileOnly 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
 
-    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24'
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25'
     //noinspection GradlePackageUpdate
     api('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1') {
         exclude group: 'org.jetbrains.kotlin'
@@ -75,11 +75,11 @@ dependencies {
     testImplementation 'commons-io:commons-io:2.16.1'
     testImplementation 'com.charleskorn.kaml:kaml:0.59.0'
     testImplementation 'org.apache.commons:commons-lang3:3.15.0'
-    testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.24'
+    testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.25'
     testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
     testImplementation 'com.google.code.gson:gson:2.11.0'
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.9.24'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.9.25'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
