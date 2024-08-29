@@ -69,12 +69,12 @@ dependencies {
     compileOnly 'commons-io:commons-io:2.16.1'
     compileOnly 'com.google.code.gson:gson:2.11.0'
     compileOnly 'org.apache.commons:commons-text:1.12.0'
-    compileOnly 'org.apache.commons:commons-lang3:3.16.0'
+    compileOnly 'org.apache.commons:commons-lang3:3.17.0'
 
     // testing libs
     testImplementation 'commons-io:commons-io:2.16.1'
     testImplementation 'com.charleskorn.kaml:kaml:0.59.0'
-    testImplementation 'org.apache.commons:commons-lang3:3.16.0'
+    testImplementation 'org.apache.commons:commons-lang3:3.17.0'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.25'
     testImplementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
     testImplementation 'com.google.code.gson:gson:2.11.0'
