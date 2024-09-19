@@ -66,13 +66,13 @@ dependencies {
 
     // optional dependencies
     //noinspection GradlePackageUpdate
-    compileOnly 'commons-io:commons-io:2.16.1'
+    compileOnly 'commons-io:commons-io:2.17.0'
     compileOnly 'com.google.code.gson:gson:2.11.0'
     compileOnly 'org.apache.commons:commons-text:1.12.0'
     compileOnly 'org.apache.commons:commons-lang3:3.17.0'
 
     // testing libs
-    testImplementation 'commons-io:commons-io:2.16.1'
+    testImplementation 'commons-io:commons-io:2.17.0'
     testImplementation 'com.charleskorn.kaml:kaml:0.59.0'
     testImplementation 'org.apache.commons:commons-lang3:3.17.0'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.25'
