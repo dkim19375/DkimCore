@@ -68,7 +68,7 @@ dependencies {
     //noinspection GradlePackageUpdate
     compileOnly 'commons-io:commons-io:2.18.0'
     compileOnly 'com.google.code.gson:gson:2.13.0'
-    compileOnly 'org.apache.commons:commons-text:1.13.0'
+    compileOnly 'org.apache.commons:commons-text:1.13.1'
     compileOnly 'org.apache.commons:commons-lang3:3.17.0'
 
     // testing libs
