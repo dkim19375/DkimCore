@@ -92,5 +92,6 @@ setupPublishing(
     ),
     publicationName = "mavenKotlin",
     verifyMavenCentral = true,
-    artifacts = artifacts.javadocJarTasks.values.map(TaskProvider<Jar>::get) + artifacts.sourcesJarTask.get()
+    artifacts = artifacts.javadocJarTasks.values.map(TaskProvider<Jar>::get) + artifacts.sourcesJarTask.get(),
+    setupNexusPublishing = System.getenv("GITHUB_ACTIONS") != "true",
 )
