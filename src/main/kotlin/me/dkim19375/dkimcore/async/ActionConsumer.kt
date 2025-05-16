@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 package me.dkim19375.dkimcore.async
 
-import me.dkim19375.dkimcore.annotation.API
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -32,20 +31,17 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import me.dkim19375.dkimcore.annotation.API
 
 @API
-abstract class ActionConsumer<T>(
-    open val task: () -> T,
-) {
+abstract class ActionConsumer<T>(open val task: () -> T) {
 
     @API
     open suspend fun await(
         failure: (Continuation<T>, Throwable) -> Unit = failure@{ continuation, throwable ->
             continuation.resumeWithException(throwable)
-        },
-    ): T = suspendCoroutine { cont ->
-        queue({ cont.resume(it) }, { failure(cont, it) })
-    }
+        }
+    ): T = suspendCoroutine { cont -> queue({ cont.resume(it) }, { failure(cont, it) }) }
 
     @API
     abstract suspend fun awaitWithTimeout(
@@ -66,12 +62,7 @@ abstract class ActionConsumer<T>(
     ): T?
 
     @API
-    open fun queue(
-        success: ((T) -> Unit) = {},
-        failure: ((Throwable) -> Unit) = {
-            throw it
-        },
-    ) {
+    open fun queue(success: ((T) -> Unit) = {}, failure: ((Throwable) -> Unit) = { throw it }) {
         try {
             success(task())
         } catch (error: Throwable) {
@@ -85,9 +76,7 @@ abstract class ActionConsumer<T>(
         timeout: Long,
         unit: TimeUnit = TimeUnit.MILLISECONDS,
         success: ((T) -> Unit) = {},
-        failure: ((Throwable) -> Unit) = {
-            throw it
-        },
+        failure: ((Throwable) -> Unit) = { throw it },
     )
 
     @API
@@ -95,30 +84,21 @@ abstract class ActionConsumer<T>(
         timeout: Long,
         unit: TimeUnit = TimeUnit.MILLISECONDS,
         success: ((T?) -> Unit) = {},
-        failure: ((Throwable) -> Unit) = {
-            throw it
-        },
+        failure: ((Throwable) -> Unit) = { throw it },
     )
 
-    @API
-    open fun complete(): T = task()
+    @API open fun complete(): T = task()
+
+    @API abstract fun completeWithTimeout(timeout: Long, unit: TimeUnit = TimeUnit.MILLISECONDS): T
 
     @API
-    abstract fun completeWithTimeout(
-        timeout: Long,
-        unit: TimeUnit = TimeUnit.MILLISECONDS,
-    ): T
+    abstract fun completeWithSafeTimeout(timeout: Long, unit: TimeUnit = TimeUnit.MILLISECONDS): T?
 
     @API
-    abstract fun completeWithSafeTimeout(
-        timeout: Long,
-        unit: TimeUnit = TimeUnit.MILLISECONDS,
-    ): T?
-
-    @API
-    open fun submit(): Future<T> = try {
-        CompletableFuture.completedFuture(task())
-    } catch (error: Throwable) {
-        CompletableFuture.failedFuture(error)
-    }
+    open fun submit(): Future<T> =
+        try {
+            CompletableFuture.completedFuture(task())
+        } catch (error: Throwable) {
+            CompletableFuture.failedFuture(error)
+        }
 }

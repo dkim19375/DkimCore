@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,13 @@
 
 package me.dkim19375.dkimcore.file
 
-import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.extension.createFileAndDirs
 import java.io.File
 import java.nio.file.Path
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.extension.createFileAndDirs
 
 abstract class DataFile(@API val file: File) {
-    @API
-    open val path: Path = file.toPath()
+    @API open val path: Path = file.toPath()
 
     @Synchronized
     open fun reload() {

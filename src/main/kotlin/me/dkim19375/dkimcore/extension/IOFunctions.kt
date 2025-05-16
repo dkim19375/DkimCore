@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 package me.dkim19375.dkimcore.extension
 
-import me.dkim19375.dkimcore.annotation.API
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
@@ -33,9 +32,9 @@ import java.nio.file.Paths
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
+import me.dkim19375.dkimcore.annotation.API
 
-@API
-fun File.createFileAndDirs() = toPath().createFileAndDirs()
+@API fun File.createFileAndDirs() = toPath().createFileAndDirs()
 
 @API
 fun Path.createFileAndDirs() {
@@ -45,27 +44,27 @@ fun Path.createFileAndDirs() {
     parent?.createDirectories()
     try {
         createFile()
-    } catch (_: FileAlreadyExistsException) {
-    }
+    } catch (_: FileAlreadyExistsException) {}
 }
 
 @API
 fun String.toFile(): File {
-    runCatchingOrNull { File(this) }?.run {
-        return this
-    }
+    runCatchingOrNull { File(this) }
+        ?.run {
+            return this
+        }
     val array = replace("\\", "/").split("/").toTypedArray()
     val first = array.getOrElse(0) { "" }
     val rest = array.drop(1)
     return Paths.get(first, *rest.toTypedArray()).toFile()
 }
 
-@API
-fun String.toPath(): Path = toFile().toPath()
+@API fun String.toPath(): Path = toFile().toPath()
 
 @API
-fun String.toURL(): Result<URL> = try {
-    Result.success(URL(this))
-} catch (ex: MalformedURLException) {
-    Result.failure(ex)
-}
+fun String.toURL(): Result<URL> =
+    try {
+        Result.success(URL(this))
+    } catch (ex: MalformedURLException) {
+        Result.failure(ex)
+    }

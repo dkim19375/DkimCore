@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,10 @@ package me.dkim19375.dkimcore.file
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.extension.createInstance
 import java.io.File
 import kotlin.reflect.KClass
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.extension.createInstance
 
 open class JsonFile<T : Any>(
     type: KClass<T>,
@@ -39,17 +39,20 @@ open class JsonFile<T : Any>(
     complexMapSerialization: Boolean = true,
     default: () -> T = type::createInstance,
     val extraGson: GsonBuilder.() -> GsonBuilder = { this },
-    @API val gson: Gson = GsonBuilder()
-        .apply {
-            if (prettyPrinting) {
-                setPrettyPrinting()
+    @API
+    val gson: Gson =
+        GsonBuilder()
+            .apply {
+                if (prettyPrinting) {
+                    setPrettyPrinting()
+                }
+                if (complexMapSerialization) {
+                    enableComplexMapKeySerialization()
+                }
+                typeAdapters.forEach(this::registerTypeHierarchyAdapter)
+                extraGson()
             }
-            if (complexMapSerialization) {
-                enableComplexMapKeySerialization()
-            }
-            typeAdapters.forEach(this::registerTypeHierarchyAdapter)
-            extraGson()
-        }.create(),
+            .create(),
 ) : ObjectDataFile<T>(file, type, default) {
     init {
         super.reload()

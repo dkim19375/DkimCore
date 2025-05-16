@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,35 +37,36 @@ private const val FIFTH_PERCENT_LONG = 100L / 5
 private const val FIFTH_PERCENT_DOUBLE = FIFTH_PERCENT_LONG.toDouble()
 
 @Suppress("SpellCheckingInspection")
-private val NUMERAL_MAP = mapOf(
-    1 to "I",
-    2 to "II",
-    4 to "IV",
-    5 to "V",
-    9 to "IX",
-    10 to "X",
-    12 to "XII",
-    36 to "XXXVI",
-    40 to "XL",
-    44 to "XLIV",
-    50 to "L",
-    72 to "LXXII",
-    89 to "LXXXIX",
-    90 to "XC",
-    95 to "XCV",
-    100 to "C",
-    321 to "CCCXXI",
-    400 to "CD",
-    422 to "CDXXII",
-    500 to "D",
-    623 to "DCXXIII",
-    900 to "CM",
-    913 to "CMXIII",
-    1000 to "M",
-    2000 to "MM",
-    3000 to "MMM",
-    3999 to "MMMCMXCIX",
-)
+private val NUMERAL_MAP =
+    mapOf(
+        1 to "I",
+        2 to "II",
+        4 to "IV",
+        5 to "V",
+        9 to "IX",
+        10 to "X",
+        12 to "XII",
+        36 to "XXXVI",
+        40 to "XL",
+        44 to "XLIV",
+        50 to "L",
+        72 to "LXXII",
+        89 to "LXXXIX",
+        90 to "XC",
+        95 to "XCV",
+        100 to "C",
+        321 to "CCCXXI",
+        400 to "CD",
+        422 to "CDXXII",
+        500 to "D",
+        623 to "DCXXIII",
+        900 to "CM",
+        913 to "CMXIII",
+        1000 to "M",
+        2000 to "MM",
+        3000 to "MMM",
+        3999 to "MMMCMXCIX",
+    )
 
 class PrimitiveFunctionsTest {
     @Test
@@ -73,11 +74,14 @@ class PrimitiveFunctionsTest {
         val last = BEFORE_FLOAT.toString().last().digitToInt() - 1
         for (test in 1 until last + 1) {
             assertTrue(
-                actual = BEFORE_FLOAT.setDecimalPlaces(test).toString()
-                    .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
-                message = "Decimal places: $test. " +
+                actual =
+                    BEFORE_FLOAT.setDecimalPlaces(test)
+                        .toString()
+                        .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
+                message =
+                    "Decimal places: $test. " +
                         "Result: ${BEFORE_FLOAT.setDecimalPlaces(test)}. " +
-                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}"
+                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}",
             )
         }
     }
@@ -87,11 +91,14 @@ class PrimitiveFunctionsTest {
         val last = BEFORE.toString().last().digitToInt() - 1
         for (test in 1 until last + 1) {
             assertTrue(
-                actual = BEFORE.setDecimalPlaces(test).toString()
-                    .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
-                message = "Decimal places: $test. " +
+                actual =
+                    BEFORE.setDecimalPlaces(test)
+                        .toString()
+                        .endsWith((test + if (test >= 3 && test != last) 2 else 1).toString()),
+                message =
+                    "Decimal places: $test. " +
                         "Result: ${BEFORE.setDecimalPlaces(test)}. " +
-                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}"
+                        "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}",
             )
         }
     }

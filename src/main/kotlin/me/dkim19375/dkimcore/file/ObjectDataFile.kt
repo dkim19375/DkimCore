@@ -24,12 +24,12 @@
 
 package me.dkim19375.dkimcore.file
 
-import me.dkim19375.dkimcore.exception.ConfigurationException
-import me.dkim19375.dkimcore.extension.atomicReference
-import me.dkim19375.dkimcore.extension.createInstance
 import java.io.File
 import kotlin.io.path.writeText
 import kotlin.reflect.KClass
+import me.dkim19375.dkimcore.exception.ConfigurationException
+import me.dkim19375.dkimcore.extension.atomicReference
+import me.dkim19375.dkimcore.extension.createInstance
 
 abstract class ObjectDataFile<T : Any>(
     file: File,
@@ -50,21 +50,23 @@ abstract class ObjectDataFile<T : Any>(
     override fun reload() {
         super.reload()
         runCatching {
-            current = file.readText().let { text ->
-                if (text.isBlank()) default() else deserialize(text)
+                current =
+                    file.readText().let { text ->
+                        if (text.isBlank()) default() else deserialize(text)
+                    }
             }
-        }.getOrElse {
-            readError = it
-            throw ConfigurationException(
-                "An error has occurred while trying to read and deserialize the file '${
+            .getOrElse {
+                readError = it
+                throw ConfigurationException(
+                    "An error has occurred while trying to read and deserialize the file '${
                     file.path
-                }'", it
-            )
-        }
+                }'",
+                    it,
+                )
+            }
         readError = null
         save()
     }
-
 
     @Synchronized
     open fun save(obj: T) {
@@ -79,7 +81,8 @@ abstract class ObjectDataFile<T : Any>(
             throw ConfigurationException(
                 "Not saving file due to an error when reading and deserializing the file '${
                     file.path
-                }'!", readError
+                }'!",
+                readError,
             )
         }
         path.writeText(serialize(current))

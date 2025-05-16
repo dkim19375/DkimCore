@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,41 +24,48 @@
 
 package me.dkim19375.dkimcore.extension
 
-import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.async.ActionConsumer
-import me.dkim19375.dkimcore.async.ExecutorsConsumer
-import me.dkim19375.dkimcore.delegate.AtomicDelegate
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.async.ActionConsumer
+import me.dkim19375.dkimcore.async.ExecutorsConsumer
+import me.dkim19375.dkimcore.delegate.AtomicDelegate
 
-fun <T> Future<T>.getResult(timeout: Long? = null, unit: TimeUnit = TimeUnit.MILLISECONDS): Result<T> = runCatching {
-    if (timeout != null) {
-        get(timeout, unit)
-    } else {
-        get()
-    }
-}.let { oldResult ->
-    val error = oldResult.exceptionOrNull()
-    if (error != null) {
-        if (error is ExecutionException) {
-            val cause = error.cause
-            if (cause != null) {
-                return@let Result.failure<T>(cause)
+fun <T> Future<T>.getResult(
+    timeout: Long? = null,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+): Result<T> =
+    runCatching {
+            if (timeout != null) {
+                get(timeout, unit)
+            } else {
+                get()
             }
         }
-        return@let Result.failure<T>(error)
-    }
-    Result.success(oldResult.getOrThrow())
-}
+        .let { oldResult ->
+            val error = oldResult.exceptionOrNull()
+            if (error != null) {
+                if (error is ExecutionException) {
+                    val cause = error.cause
+                    if (cause != null) {
+                        return@let Result.failure<T>(cause)
+                    }
+                }
+                return@let Result.failure<T>(error)
+            }
+            Result.success(oldResult.getOrThrow())
+        }
 
 @API
 fun <T> runWithTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
-    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask ->
+        ExecutorsConsumer(task = consumerTask)
+    },
     task: () -> T,
 ): T = consumer(task).completeWithTimeout(timeout, unit)
 
@@ -66,7 +73,9 @@ fun <T> runWithTimeout(
 fun <T> runWithSafeTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
-    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask ->
+        ExecutorsConsumer(task = consumerTask)
+    },
     task: () -> T,
 ): T? = consumer(task).completeWithSafeTimeout(timeout, unit)
 
@@ -74,7 +83,9 @@ fun <T> runWithSafeTimeout(
 suspend fun <T> awaitWithTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
-    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask ->
+        ExecutorsConsumer(task = consumerTask)
+    },
     task: () -> T,
 ): T = consumer(task).awaitWithTimeout(timeout, unit)
 
@@ -82,34 +93,40 @@ suspend fun <T> awaitWithTimeout(
 suspend fun <T> awaitWithSafeTimeout(
     timeout: Long,
     unit: TimeUnit = TimeUnit.MILLISECONDS,
-    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask -> ExecutorsConsumer(task = consumerTask) },
+    consumer: (task: () -> T) -> ActionConsumer<T> = { consumerTask ->
+        ExecutorsConsumer(task = consumerTask)
+    },
     task: () -> T,
 ): T? = consumer(task).awaitWithSafeTimeout(timeout, unit)
 
 @API
-fun atomicBoolean(initialValue: Boolean = false) = AtomicDelegate(
-    atomicInstance = AtomicBoolean(initialValue),
-    getter = AtomicBoolean::get,
-    setter = { atomic, value -> atomic.set(value) },
-)
+fun atomicBoolean(initialValue: Boolean = false) =
+    AtomicDelegate(
+        atomicInstance = AtomicBoolean(initialValue),
+        getter = AtomicBoolean::get,
+        setter = { atomic, value -> atomic.set(value) },
+    )
 
 @API
-fun atomicInteger(initialValue: Int = 0) = AtomicDelegate(
-    atomicInstance = AtomicInteger(initialValue),
-    getter = AtomicInteger::get,
-    setter = { atomic, value -> atomic.set(value) },
-)
+fun atomicInteger(initialValue: Int = 0) =
+    AtomicDelegate(
+        atomicInstance = AtomicInteger(initialValue),
+        getter = AtomicInteger::get,
+        setter = { atomic, value -> atomic.set(value) },
+    )
 
 @API
-fun atomicLong(initialValue: Long = 0L) = AtomicDelegate(
-    atomicInstance = AtomicLong(initialValue),
-    getter = AtomicLong::get,
-    setter = { atomic, value -> atomic.set(value) },
-)
+fun atomicLong(initialValue: Long = 0L) =
+    AtomicDelegate(
+        atomicInstance = AtomicLong(initialValue),
+        getter = AtomicLong::get,
+        setter = { atomic, value -> atomic.set(value) },
+    )
 
 @API
-fun <T> atomicReference(initialValue: T? = null) = AtomicDelegate<AtomicReference<T>, T>(
-    atomicInstance = AtomicReference(initialValue),
-    getter = AtomicReference<T>::get,
-    setter = { atomic, value -> atomic.set(value) },
-)
+fun <T> atomicReference(initialValue: T? = null) =
+    AtomicDelegate<AtomicReference<T>, T>(
+        atomicInstance = AtomicReference(initialValue),
+        getter = AtomicReference<T>::get,
+        setter = { atomic, value -> atomic.set(value) },
+    )

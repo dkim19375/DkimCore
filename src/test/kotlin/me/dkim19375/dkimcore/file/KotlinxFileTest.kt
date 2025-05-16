@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,6 @@
 package me.dkim19375.dkimcore.file
 
 import com.charleskorn.kaml.Yaml
-import kotlinx.serialization.Serializable
-import me.dkim19375.dkimcore.exception.ConfigurationException
-import me.dkim19375.dkimcore.extension.createFileAndDirs
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.Test
@@ -36,6 +33,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
+import me.dkim19375.dkimcore.exception.ConfigurationException
+import me.dkim19375.dkimcore.extension.createFileAndDirs
 
 private val TEST_FILE: File = Paths.get("build", "tests", "test.yml").toFile()
 private const val VALUE_1 = 1
@@ -46,16 +47,21 @@ private val VALUE_MAP_1 = mapOf(1 to 2, 3 to 4)
 private val VALUE_MAP_1_ALT = mapOf(4 to 5, 6 to 7)
 private val VALUE_MAP_2 = mapOf("key #1-1" to "value #1-1", "key #1-2" to "value #1-2")
 private val VALUE_MAP_2_ALT = mapOf("key #2-1" to "value #2-1", "key #2-2" to "value #2-2")
-private val INVALID_DATA = """
+private val INVALID_DATA =
+    """
     This is not valid data: [}
-""".trimIndent()
+"""
+        .trimIndent()
 
 class KotlinxFileTest {
     @Serializable
     internal data class TestClass(val value1: Int = VALUE_1, val value2: String = VALUE_2)
 
     @Serializable
-    internal data class MapTestClass(val map1: Map<Int, Int> = VALUE_MAP_1, val map2: Map<String, String> = VALUE_MAP_2)
+    internal data class MapTestClass(
+        val map1: Map<Int, Int> = VALUE_MAP_1,
+        val map2: Map<String, String> = VALUE_MAP_2,
+    )
 
     @Test
     fun `Automatic file creation`() {
@@ -136,12 +142,12 @@ class KotlinxFileTest {
         assertEquals(VALUE_2_ALT, file2.get().value2)
     }
 
-
     @Test
     fun `Automatic instance creation for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
         assertEquals(VALUE_MAP_1, file.get().map1)
         assertEquals(VALUE_MAP_2, file.get().map2)
     }
@@ -150,8 +156,10 @@ class KotlinxFileTest {
     fun `Testing reload and set for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
-        val file2 = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file2 =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.set(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -175,8 +183,10 @@ class KotlinxFileTest {
     fun `Testing set & save for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
-        val file2 = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file2 =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.save(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -199,15 +209,12 @@ class KotlinxFileTest {
             KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
         }
         TEST_FILE.writeText("")
-        val file = KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
         TEST_FILE.writeText(INVALID_DATA)
         assertEquals(INVALID_DATA, TEST_FILE.readText())
-        assertFailsWith<ConfigurationException> {
-            file.reload()
-        }
-        assertFailsWith<ConfigurationException> {
-            file.save()
-        }
+        assertFailsWith<ConfigurationException> { file.reload() }
+        assertFailsWith<ConfigurationException> { file.save() }
         assertEquals(INVALID_DATA, TEST_FILE.readText())
     }
 

@@ -24,4 +24,5 @@
 
 package me.dkim19375.dkimcore.exception
 
-class ConfigurationException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)
+class ConfigurationException(message: String? = null, cause: Throwable? = null) :
+    RuntimeException(message, cause)

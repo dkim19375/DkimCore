@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,15 @@
 
 package me.dkim19375.dkimcore.delegate
 
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.dkim19375.dkimcore.test.TestException
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class CoroutineScopeDelegateTest {
     @Test

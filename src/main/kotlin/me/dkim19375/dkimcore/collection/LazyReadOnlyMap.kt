@@ -26,28 +26,28 @@ package me.dkim19375.dkimcore.collection
 
 class LazyReadOnlyMap<K, V>(private val internalMap: Map<K, Lazy<V>>) : AbstractMap<K, V>() {
 
-    override val entries: Set<Map.Entry<K, V>> = object : AbstractSet<Map.Entry<K, V>>() {
+    override val entries: Set<Map.Entry<K, V>> =
+        object : AbstractSet<Map.Entry<K, V>>() {
 
-        override val size: Int = internalMap.size
+            override val size: Int = internalMap.size
 
-        override fun iterator(): Iterator<Map.Entry<K, V>> = object : Iterator<Map.Entry<K, V>> {
-            private val internalIterator = internalMap.iterator()
+            override fun iterator(): Iterator<Map.Entry<K, V>> =
+                object : Iterator<Map.Entry<K, V>> {
+                    private val internalIterator = internalMap.iterator()
 
-            override fun hasNext(): Boolean = internalIterator.hasNext()
+                    override fun hasNext(): Boolean = internalIterator.hasNext()
 
-            override fun next(): Map.Entry<K, V> = object : Map.Entry<K, V> {
-                private val entry = internalIterator.next()
+                    override fun next(): Map.Entry<K, V> =
+                        object : Map.Entry<K, V> {
+                            private val entry = internalIterator.next()
 
-                override val key: K = entry.key
-                override val value: V by entry.value
-            }
-
+                            override val key: K = entry.key
+                            override val value: V by entry.value
+                        }
+                }
         }
-
-    }
 
     override val keys: Set<K> = internalMap.keys
 
     override fun containsKey(key: K): Boolean = internalMap.containsKey(key)
-
 }

@@ -24,9 +24,9 @@
 
 package me.dkim19375.dkimcore.collection
 
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
 
 class LazyReadOnlyMapTest {
     private object LazyAccessException : RuntimeException() {
@@ -74,17 +74,12 @@ class LazyReadOnlyMapTest {
     @Test
     fun `Throws when getting`() {
         val map = LazyReadOnlyMap(mapOf(1 to ThrowOnLoadLazy, 2 to ThrowOnLoadLazy))
-        assertThrows<LazyAccessException> {
-            map[1]
-        }
+        assertThrows<LazyAccessException> { map[1] }
     }
 
     @Test
     fun `Throws when getting value of entry`() {
         val map = LazyReadOnlyMap(mapOf(1 to ThrowOnLoadLazy, 2 to ThrowOnLoadLazy))
-        assertThrows<LazyAccessException> {
-            map.entries.first().value
-        }
+        assertThrows<LazyAccessException> { map.entries.first().value }
     }
-
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@ class OtherFunctionsTest {
         }
         assertTrue(
             actual = result.first <= TIME_LIMIT,
-            message = "Expected time to be less than ${TIME_LIMIT}ms but was ${result.first}ms"
+            message = "Expected time to be less than ${TIME_LIMIT}ms but was ${result.first}ms",
         )
         assertEquals("abc", result.second)
     }
@@ -67,7 +67,7 @@ class OtherFunctionsTest {
         }
         assertTrue(
             actual = result.first <= TIME_LIMIT,
-            message = "Expected time to be less than ${TIME_LIMIT}ms but was ${result.first}ms"
+            message = "Expected time to be less than ${TIME_LIMIT}ms but was ${result.first}ms",
         )
         assertEquals("abc", result.second)
     }

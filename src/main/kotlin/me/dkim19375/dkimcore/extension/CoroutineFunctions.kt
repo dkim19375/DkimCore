@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,27 @@
 
 package me.dkim19375.dkimcore.extension
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
-import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.delegate.createCoroutineScope
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.delegate.createCoroutineScope
 
-@API
-val SCOPE: CoroutineScope by createCoroutineScope(Dispatchers.Default)
+@API val SCOPE: CoroutineScope by createCoroutineScope(Dispatchers.Default)
 
-@API
-val IO_SCOPE: CoroutineScope by createCoroutineScope(Dispatchers.IO)
+@API val IO_SCOPE: CoroutineScope by createCoroutineScope(Dispatchers.IO)
 
 @API
 suspend fun <T> await(
     failure: (Continuation<T>, Throwable) -> Unit = { continuation, throwable ->
         continuation.resumeWithException(throwable)
     },
-    action: (() -> T)
+    action: (() -> T),
 ): T = suspendCoroutine { cont ->
     try {
         cont.resume(action())

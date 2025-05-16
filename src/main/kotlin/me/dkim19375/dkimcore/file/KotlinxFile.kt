@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,13 @@
 
 package me.dkim19375.dkimcore.file
 
+import java.io.File
+import kotlin.reflect.KClass
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.StringFormat
 import me.dkim19375.dkimcore.extension.createInstance
-import java.io.File
-import kotlin.reflect.KClass
 
 open class KotlinxFile<T : Any>(
     type: KClass<T>,
@@ -46,7 +46,8 @@ open class KotlinxFile<T : Any>(
         super.save()
     }
 
-    override fun deserialize(text: String): T = format.decodeFromString(deserializationStrategy, text)
+    override fun deserialize(text: String): T =
+        format.decodeFromString(deserializationStrategy, text)
 
     override fun serialize(obj: T): String = format.encodeToString(serializationStrategy, obj)
 }

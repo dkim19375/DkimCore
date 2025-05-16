@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,19 @@
 
 package me.dkim19375.dkimcore.file
 
+import java.io.File
 import me.dkim19375.dkimcore.annotation.API
 import me.mattstudios.config.SettingsHolder
 import me.mattstudios.config.SettingsManager
 import me.mattstudios.config.properties.Property
-import java.io.File
 
 @API
 open class YamlFile(@API val properties: SettingsHolder, file: File) : DataFile(file) {
     @API
-    val manager: SettingsManager = SettingsManager.from(this.file).configurationData(properties.javaClass).create()
+    val manager: SettingsManager =
+        SettingsManager.from(this.file).configurationData(properties.javaClass).create()
 
-    @API
-    @Synchronized
-    fun <T : Any> get(property: Property<T>): T = manager.get(property)
+    @API @Synchronized fun <T : Any> get(property: Property<T>): T = manager.get(property)
 
     @API
     @Synchronized

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,12 @@
 
 package me.dkim19375.dkimcore.async
 
-import me.dkim19375.dkimcore.annotation.API
 import java.util.concurrent.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import me.dkim19375.dkimcore.annotation.API
 
 class ExecutorsConsumer<T>(
     private val executor: ExecutorService = Executors.newCachedThreadPool(),
@@ -69,13 +69,8 @@ class ExecutorsConsumer<T>(
     }
 
     @API
-    override fun queue(
-        success: ((T) -> Unit),
-        failure: ((Throwable) -> Unit),
-    ) {
-        executor.submit {
-            super.queue(success, failure)
-        }
+    override fun queue(success: ((T) -> Unit), failure: ((Throwable) -> Unit)) {
+        executor.submit { super.queue(success, failure) }
     }
 
     override fun queueWithTimeout(
@@ -130,17 +125,11 @@ class ExecutorsConsumer<T>(
         return future
     }
 
-    override fun completeWithTimeout(
-        timeout: Long,
-        unit: TimeUnit,
-    ): T {
+    override fun completeWithTimeout(timeout: Long, unit: TimeUnit): T {
         return submit().get(timeout, unit)
     }
 
-    override fun completeWithSafeTimeout(
-        timeout: Long,
-        unit: TimeUnit,
-    ): T? {
+    override fun completeWithSafeTimeout(timeout: Long, unit: TimeUnit): T? {
         return try {
             submit().get(timeout, unit)
         } catch (_: TimeoutException) {

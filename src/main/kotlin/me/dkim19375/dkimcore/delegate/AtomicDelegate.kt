@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,5 +34,6 @@ class AtomicDelegate<T, V>(
 ) : ReadWriteProperty<Any?, V> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): V = getter(atomicInstance)
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) = setter(atomicInstance, value)
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) =
+        setter(atomicInstance, value)
 }

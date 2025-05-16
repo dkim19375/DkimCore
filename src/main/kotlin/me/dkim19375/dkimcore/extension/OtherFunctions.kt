@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,20 @@
 
 package me.dkim19375.dkimcore.extension
 
-import me.dkim19375.dkimcore.annotation.API
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.isAccessible
+import me.dkim19375.dkimcore.annotation.API
 
-@API
-inline fun <reified T> typedNull(): T? = null
+@API inline fun <reified T> typedNull(): T? = null
 
-fun <T> runCatchingOrNull(action: () -> T?): T? = try {
-    action()
-} catch (e: Throwable) {
-    null
-}
+fun <T> runCatchingOrNull(action: () -> T?): T? =
+    try {
+        action()
+    } catch (e: Throwable) {
+        null
+    }
 
 @API
 fun <T> getMillisAndValue(function: () -> T): Pair<Double, T> {
@@ -61,15 +61,16 @@ inline fun <reified T : Enum<T>> enumValueOfOrNull(str: String): T? = runCatchin
 }
 
 fun <T : Any> KClass<T>.createInstance(): T {
-    val noArgsConstructor = constructors.filter { it.parameters.all(KParameter::isOptional) }.ifEmpty {
-        throw IllegalStateException("Class should have a single no-arg constructor: $this")
-    }
+    val noArgsConstructor =
+        constructors
+            .filter { it.parameters.all(KParameter::isOptional) }
+            .ifEmpty {
+                throw IllegalStateException("Class should have a single no-arg constructor: $this")
+            }
 
     noArgsConstructor.singleOrNull(KFunction<T>::isAccessible)?.let {
         return it.callBy(emptyMap())
     }
 
-    return noArgsConstructor.single().apply {
-        isAccessible = true
-    }.callBy(emptyMap())
+    return noArgsConstructor.single().apply { isAccessible = true }.callBy(emptyMap())
 }

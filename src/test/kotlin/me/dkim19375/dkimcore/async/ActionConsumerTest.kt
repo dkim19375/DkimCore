@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,146 +24,146 @@
 
 package me.dkim19375.dkimcore.async
 
-import kotlinx.coroutines.runBlocking
-import me.dkim19375.dkimcore.extension.getResult
 import java.util.concurrent.CompletableFuture
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
+import me.dkim19375.dkimcore.extension.getResult
 
 internal class ActionConsumerTest {
-    private fun <T> getConsumers(task: () -> T): Set<ActionConsumer<T>> = setOf(
-        CoroutineConsumer { task() },
-        ExecutorsConsumer { task() }
-    )
+    private fun <T> getConsumers(task: () -> T): Set<ActionConsumer<T>> =
+        setOf(CoroutineConsumer { task() }, ExecutorsConsumer { task() })
 
     class ConsumerException : RuntimeException()
 
     @Test
-    fun `Test exception handling`() = getConsumers {
-        throw ConsumerException()
-    }.forEach { consumer ->
-        assertFailsWith(ConsumerException::class, "Submit failed (type: ${consumer::class.simpleName})") {
-            consumer.submit().getResult().exceptionOrNull()?.let {
-                throw it
+    fun `Test exception handling`() =
+        getConsumers { throw ConsumerException() }
+            .forEach { consumer ->
+                assertFailsWith(
+                    ConsumerException::class,
+                    "Submit failed (type: ${consumer::class.simpleName})",
+                ) {
+                    consumer.submit().getResult().exceptionOrNull()?.let { throw it }
+                }
+                assertFailsWith(
+                    ConsumerException::class,
+                    "Complete failed (type: ${consumer::class.simpleName})",
+                ) {
+                    consumer.complete()
+                }
+                runBlocking {
+                    assertFailsWith(
+                        ConsumerException::class,
+                        "Await failed (type: ${consumer::class.simpleName})",
+                    ) {
+                        consumer.await()
+                    }
+                }
             }
-        }
-        assertFailsWith(ConsumerException::class, "Complete failed (type: ${consumer::class.simpleName})") {
-            consumer.complete()
-        }
-        runBlocking {
-            assertFailsWith(ConsumerException::class, "Await failed (type: ${consumer::class.simpleName})") {
-                consumer.await()
-            }
-        }
-    }
 
     @Test
     fun `Test time of queue`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(300L)
-        }.forEach { consumer ->
-            val time = measureTimeMillis {
-                val completed = CompletableFuture<Unit?>()
-                consumer.queue({ completed.complete(null) }) { completed.completeExceptionally(it) }
-                completed.get()
+        getConsumers { Thread.sleep(300L) }
+            .forEach { consumer ->
+                val time = measureTimeMillis {
+                    val completed = CompletableFuture<Unit?>()
+                    consumer.queue({ completed.complete(null) }) {
+                        completed.completeExceptionally(it)
+                    }
+                    completed.get()
+                }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test timeout of queue`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(600L)
-        }.forEach { consumer ->
-            val time = measureTimeMillis {
-                val completed = CompletableFuture<Unit?>()
-                consumer.queueWithSafeTimeout(300L, success = { completed.complete(null) }) {
-                    completed.completeExceptionally(it)
+        getConsumers { Thread.sleep(600L) }
+            .forEach { consumer ->
+                val time = measureTimeMillis {
+                    val completed = CompletableFuture<Unit?>()
+                    consumer.queueWithSafeTimeout(300L, success = { completed.complete(null) }) {
+                        completed.completeExceptionally(it)
+                    }
+                    completed.get()
                 }
-                completed.get()
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test time of complete`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(300L)
-        }.forEach { consumer ->
-            val time = measureTimeMillis {
-                consumer.complete()
+        getConsumers { Thread.sleep(300L) }
+            .forEach { consumer ->
+                val time = measureTimeMillis { consumer.complete() }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test timeout of complete`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(600L)
-        }.forEach { consumer ->
-            val time = measureTimeMillis {
-                consumer.completeWithSafeTimeout(300L)
+        getConsumers { Thread.sleep(600L) }
+            .forEach { consumer ->
+                val time = measureTimeMillis { consumer.completeWithSafeTimeout(300L) }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test time of submit`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(300L)
-        }.forEach { consumer ->
-            val time = measureTimeMillis {
-                consumer.submit().get()
+        getConsumers { Thread.sleep(300L) }
+            .forEach { consumer ->
+                val time = measureTimeMillis { consumer.submit().get() }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test time of await`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(300L)
-        }.forEach { consumer ->
-            val time = runBlocking {
-                measureTimeMillis {
-                    consumer.await()
-                }
+        getConsumers { Thread.sleep(300L) }
+            .forEach { consumer ->
+                val time = runBlocking { measureTimeMillis { consumer.await() } }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 
     @Test
     fun `Test timeout of await`() {
         val max = 500L
-        getConsumers {
-            Thread.sleep(600L)
-        }.forEach { consumer ->
-            val time = runBlocking {
-                measureTimeMillis {
-                    consumer.awaitWithSafeTimeout(300L)
-                }
+        getConsumers { Thread.sleep(600L) }
+            .forEach { consumer ->
+                val time = runBlocking { measureTimeMillis { consumer.awaitWithSafeTimeout(300L) } }
+                assertTrue(
+                    max > time,
+                    "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})",
+                )
             }
-            assertTrue(max > time,
-                "Expected max to be greater than time: ${time}ms (type: ${consumer::class.simpleName})")
-        }
     }
 }

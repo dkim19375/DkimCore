@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,15 @@ import kotlin.test.assertNotNull
 private val TEST_UUID = UUID.randomUUID()
 private const val PLACEHOLDER_STR = "Testing placeholder_1 and placeholder 2!"
 private const val PERCENT_PLACEHOLDER_STR = "Testing %placeholder_1% and %placeholder 2%!"
-private const val CUSTOM_PLACEHOLDER_STR = "Testing (placeholder_1) and (placeholder 2)! *(no_parse)"
+private const val CUSTOM_PLACEHOLDER_STR =
+    "Testing (placeholder_1) and (placeholder 2)! *(no_parse)"
 private const val EXPECTED_PLACEHOLDER = "Testing replacement_1 and replacement 2!"
-private val PLACEHOLDERS = mapOf(
-    "placeholder_1" to "replacement_1",
-    "placeholder 2" to "replacement 2",
-    "no_parse" to "parsed"
-)
+private val PLACEHOLDERS =
+    mapOf(
+        "placeholder_1" to "replacement_1",
+        "placeholder 2" to "replacement 2",
+        "no_parse" to "parsed",
+    )
 
 class StringFunctionsTest {
     @Test
@@ -68,12 +70,18 @@ class StringFunctionsTest {
         assertEquals(EXPECTED_PLACEHOLDER, PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false))
         assertNotEquals(EXPECTED_PLACEHOLDER, PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS))
         assertEquals(EXPECTED_PLACEHOLDER, PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS))
-        assertNotEquals(EXPECTED_PLACEHOLDER, PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false))
-        assertEquals("$EXPECTED_PLACEHOLDER (no_parse)", CUSTOM_PLACEHOLDER_STR.setPlaceholders(
-            map = PLACEHOLDERS,
-            prefix = "(",
-            suffix = ")",
-            escape = '*'
-        ))
+        assertNotEquals(
+            EXPECTED_PLACEHOLDER,
+            PERCENT_PLACEHOLDER_STR.setPlaceholders(PLACEHOLDERS, false),
+        )
+        assertEquals(
+            "$EXPECTED_PLACEHOLDER (no_parse)",
+            CUSTOM_PLACEHOLDER_STR.setPlaceholders(
+                map = PLACEHOLDERS,
+                prefix = "(",
+                suffix = ")",
+                escape = '*',
+            ),
+        )
     }
 }

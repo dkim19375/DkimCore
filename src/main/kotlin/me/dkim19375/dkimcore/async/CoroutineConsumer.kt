@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,20 @@
 
 package me.dkim19375.dkimcore.async
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import me.dkim19375.dkimcore.annotation.API
-import me.dkim19375.dkimcore.extension.*
 import java.util.concurrent.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import me.dkim19375.dkimcore.annotation.API
+import me.dkim19375.dkimcore.extension.*
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @API
-open class CoroutineConsumer<T>(
-    protected open val scope: CoroutineScope = SCOPE,
-    task: () -> T,
-) : ActionConsumer<T>(task) {
+open class CoroutineConsumer<T>(protected open val scope: CoroutineScope = SCOPE, task: () -> T) :
+    ActionConsumer<T>(task) {
 
     override suspend fun awaitWithTimeout(
         timeout: Long,
@@ -74,13 +72,8 @@ open class CoroutineConsumer<T>(
     }
 
     @API
-    override fun queue(
-        success: ((T) -> Unit),
-        failure: ((Throwable) -> Unit),
-    ) {
-        scope.launch {
-            super.queue(success, failure)
-        }
+    override fun queue(success: ((T) -> Unit), failure: ((Throwable) -> Unit)) {
+        scope.launch { super.queue(success, failure) }
     }
 
     override fun queueWithTimeout(
@@ -91,9 +84,7 @@ open class CoroutineConsumer<T>(
     ) {
         scope.launch {
             val future = FutureTask(task)
-            launch {
-                future.run()
-            }
+            launch { future.run() }
             launch {
                 try {
                     success(future.getResult(timeout, unit).getOrThrow())
@@ -112,9 +103,7 @@ open class CoroutineConsumer<T>(
     ) {
         scope.launch {
             val future = FutureTask(task)
-            launch {
-                future.run()
-            }
+            launch { future.run() }
             launch task@{
                 try {
                     success(future.getResult(timeout, unit).getOrThrow())
@@ -143,22 +132,15 @@ open class CoroutineConsumer<T>(
         return future
     }
 
-    override fun completeWithTimeout(
-        timeout: Long,
-        unit: TimeUnit,
-    ): T {
+    override fun completeWithTimeout(timeout: Long, unit: TimeUnit): T {
         return submit().getResult(timeout, unit).getOrThrow()
     }
 
-    override fun completeWithSafeTimeout(
-        timeout: Long,
-        unit: TimeUnit,
-    ): T? {
+    override fun completeWithSafeTimeout(timeout: Long, unit: TimeUnit): T? {
         return try {
             submit().getResult(timeout, unit).getOrThrow()
         } catch (_: TimeoutException) {
             null
         }
     }
-
 }

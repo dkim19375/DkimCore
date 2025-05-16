@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@
 
 package me.dkim19375.dkimcore.file
 
+import java.io.File
+import java.nio.file.Paths
+import kotlin.test.*
 import me.dkim19375.dkimcore.extension.createFileAndDirs
 import me.mattstudios.config.SettingsHolder
 import me.mattstudios.config.annotations.Path
 import me.mattstudios.config.properties.Property
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.io.File
-import java.nio.file.Paths
-import kotlin.test.*
 
 private val TEST_FILE: File = Paths.get("build", "tests", "test.yml").toFile()
 private const val DEFAULT_VALUE: String = "test"
@@ -40,8 +40,7 @@ private const val OTHER_VALUE: String = "other"
 internal class YamlFileTest {
 
     object SettingsHolderTesting : SettingsHolder {
-        @Path("test-path")
-        val PROPERTY = Property.create(DEFAULT_VALUE)
+        @Path("test-path") val PROPERTY = Property.create(DEFAULT_VALUE)
     }
 
     @Test

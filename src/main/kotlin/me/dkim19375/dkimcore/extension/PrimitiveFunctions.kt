@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 dkim19375
+ * Copyright (c) 2023 dkim19375
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,49 +24,43 @@
 
 package me.dkim19375.dkimcore.extension
 
-import me.dkim19375.dkimcore.annotation.API
 import java.util.TreeMap
 import kotlin.math.pow
 import kotlin.math.roundToLong
+import me.dkim19375.dkimcore.annotation.API
 
 fun Float.setDecimalPlaces(amount: Int?): Float {
     amount ?: return this
-    return 10f.pow(amount).let { pow ->
-        (this * pow).roundToLong() / pow
-    }
+    return 10f.pow(amount).let { pow -> (this * pow).roundToLong() / pow }
 }
 
 fun Double.setDecimalPlaces(amount: Int?): Double {
     amount ?: return this
-    return 10.0.pow(amount).let { pow ->
-        (this * pow).roundToLong() / pow
+    return 10.0.pow(amount).let { pow -> (this * pow).roundToLong() / pow }
+}
+
+@API fun Long.getPercentage(max: Long): Long = this * 100 / max
+
+@API fun Double.getPercentage(max: Double): Double = this * 100 / max
+
+@API fun Number.percentChance(): Boolean = Math.random() * 100 <= toDouble()
+
+private val romanNumeralMap =
+    TreeMap<Int, String>().apply {
+        put(1, "I")
+        put(4, "IV")
+        put(5, "V")
+        put(9, "IX")
+        put(10, "X")
+        put(40, "XL")
+        put(50, "L")
+        put(90, "XC")
+        put(100, "C")
+        put(400, "CD")
+        put(500, "D")
+        put(900, "CM")
+        put(1000, "M")
     }
-}
-
-@API
-fun Long.getPercentage(max: Long): Long = this * 100 / max
-
-@API
-fun Double.getPercentage(max: Double): Double = this * 100 / max
-
-@API
-fun Number.percentChance(): Boolean = Math.random() * 100 <= toDouble()
-
-private val romanNumeralMap = TreeMap<Int, String>().apply {
-    put(1, "I")
-    put(4, "IV")
-    put(5, "V")
-    put(9, "IX")
-    put(10, "X")
-    put(40, "XL")
-    put(50, "L")
-    put(90, "XC")
-    put(100, "C")
-    put(400, "CD")
-    put(500, "D")
-    put(900, "CM")
-    put(1000, "M")
-}
 
 fun Int.toRomanNumeral(limit: Int = 3999): String {
     if (this > limit || this > 3999) {
