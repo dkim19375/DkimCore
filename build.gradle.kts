@@ -95,3 +95,9 @@ setupPublishing(
     artifacts = artifacts.javadocJarTasks.values.map(TaskProvider<Jar>::get) + artifacts.sourcesJarTask.get(),
     setupNexusPublishing = System.getenv("GITHUB_ACTIONS") != "true",
 )
+
+tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
+}
