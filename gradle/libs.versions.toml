@@ -2,7 +2,7 @@
 commons-io = "2.19.0"
 commons-lang3 = "3.17.0"
 commons-text = "1.13.1"
-dkim-gradle = "1.4.3"
+dkim-gradle = "1.4.4"
 dokkatoo = "2.4.0"
 gson = "2.13.1"
 junit = "5.12.2"
