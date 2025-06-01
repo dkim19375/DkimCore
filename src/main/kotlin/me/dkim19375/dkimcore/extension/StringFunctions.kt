@@ -92,9 +92,10 @@ fun String.setPlaceholders(
     prefix: String,
     suffix: String,
     escape: Char = '0',
+    useManualReplacements: Boolean = false,
 ): String =
     when {
-        usesApacheText && prefix.isNotEmpty() && suffix.isNotEmpty() ->
+        !useManualReplacements && usesApacheText && prefix.isNotEmpty() && suffix.isNotEmpty() ->
             StringSubstitutor(
                     object : StringLookup {
                         override fun lookup(key: String?): String? {
@@ -108,7 +109,7 @@ fun String.setPlaceholders(
                 )
                 .replace(this)
 
-        usesLang3 && prefix.isNotEmpty() && suffix.isNotEmpty() ->
+        !useManualReplacements && usesLang3 && prefix.isNotEmpty() && suffix.isNotEmpty() ->
             StrSubstitutor(
                     object : StrLookup<String>() {
                         override fun lookup(key: String?): String? {
