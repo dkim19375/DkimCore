@@ -56,11 +56,25 @@ fun String.toUUID(): UUID? {
 }
 
 @API
-fun String.setPlaceholders(map: Map<String, String>, wrapPercent: Boolean = true): String =
+fun String.setPlaceholders(
+    map: Map<String, String>,
+    wrapPercent: Boolean = true,
+    useManualReplacements: Boolean = false,
+): String =
     if (wrapPercent) {
-        setPlaceholders(map, "%", "%")
+        setPlaceholders(
+            map,
+            prefix = "%",
+            suffix = "%",
+            useManualReplacements = useManualReplacements,
+        )
     } else {
-        setPlaceholders(map, "", "")
+        setPlaceholders(
+            map,
+            prefix = "",
+            suffix = "",
+            useManualReplacements = useManualReplacements,
+        )
     }
 
 /**
