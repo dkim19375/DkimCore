@@ -39,8 +39,9 @@ open class KotlinxFile<T : Any>(
     file: File,
     private val serializationStrategy: SerializationStrategy<T> = serializer,
     private val deserializationStrategy: DeserializationStrategy<T> = serializer,
+    delegateAutoSave: Boolean = true,
     default: () -> T = type::createInstance,
-) : ObjectDataFile<T>(file, type, default) {
+) : ObjectDataFile<T>(file, type, default, delegateAutoSave) {
     init {
         super.reload()
         super.save()

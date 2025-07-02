@@ -201,6 +201,7 @@ class CollectionFunctionsTest {
         assertThrows<ClassCastException> { stringDeque.castChecked<Int>() }
         assertDoesNotThrow { stringDeque.castChecked<String>().first() }
         assertNull(stringDeque.castCheckedSafe<Int>())
-        assertSame(STRING_DEQUE.toList(), stringDeque.castCheckedSafe<String>()?.toList())
+        assertSame(STRING_DEQUE, stringDeque.castCheckedSafe<String>())
+        assertEquals(STRING_DEQUE.toList(), stringDeque.castCheckedSafe<String>()?.toList())
     }
 }

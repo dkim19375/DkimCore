@@ -34,7 +34,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import me.dkim19375.dkimcore.exception.ConfigurationException
 import me.dkim19375.dkimcore.extension.createFileAndDirs
 

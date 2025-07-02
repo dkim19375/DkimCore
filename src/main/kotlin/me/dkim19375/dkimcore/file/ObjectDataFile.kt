@@ -26,7 +26,9 @@ package me.dkim19375.dkimcore.file
 
 import java.io.File
 import kotlin.io.path.writeText
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import me.dkim19375.dkimcore.exception.ConfigurationException
 import me.dkim19375.dkimcore.extension.atomicReference
 import me.dkim19375.dkimcore.extension.createInstance
@@ -35,7 +37,8 @@ abstract class ObjectDataFile<T : Any>(
     file: File,
     protected val type: KClass<T>,
     protected val default: () -> T = type::createInstance,
-) : DataFile(file) {
+    protected val delegateAutoSave: Boolean = true,
+) : DataFile(file), ReadWriteProperty<Any?, T> {
 
     private var current by atomicReference(default())
     private var readError by atomicReference<Throwable?>()
@@ -91,4 +94,13 @@ abstract class ObjectDataFile<T : Any>(
     protected abstract fun deserialize(text: String): T
 
     protected abstract fun serialize(obj: T): String
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T = get()
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) =
+        if (delegateAutoSave) {
+            save(value)
+        } else {
+            set(value)
+        }
 }

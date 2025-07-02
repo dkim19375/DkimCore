@@ -53,7 +53,8 @@ open class JsonFile<T : Any>(
                 extraGson()
             }
             .create(),
-) : ObjectDataFile<T>(file, type, default) {
+    delegateAutoSave: Boolean = true,
+) : ObjectDataFile<T>(file, type, default, delegateAutoSave) {
     init {
         super.reload()
         super.save()

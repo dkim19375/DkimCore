@@ -31,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import me.dkim19375.dkimcore.exception.ConfigurationException
 import me.dkim19375.dkimcore.extension.createFileAndDirs
@@ -51,15 +52,12 @@ private val INVALID_DATA =
         .trimIndent()
 
 class JsonFileTest {
-    private class TestClass {
-        var value1 = VALUE_1
-        var value2 = VALUE_2
-    }
+    private data class TestClass(val value1: Int = VALUE_1, val value2: String = VALUE_2)
 
-    private class MapTestClass {
-        var map1 = VALUE_MAP_1
-        var map2 = VALUE_MAP_2
-    }
+    private data class MapTestClass(
+        val map1: Map<Int, Int> = VALUE_MAP_1,
+        val map2: Map<String, String> = VALUE_MAP_2,
+    )
 
     @Test
     fun `Automatic file creation`() {
@@ -102,9 +100,7 @@ class JsonFileTest {
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(TestClass::class, TEST_FILE)
         val file2 = JsonFile(TestClass::class, TEST_FILE)
-        val test = TestClass()
-        test.value1 = VALUE_1_ALT
-        test.value2 = VALUE_2_ALT
+        val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.set(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
         assertEquals(VALUE_2_ALT, file.get().value2)
@@ -129,9 +125,7 @@ class JsonFileTest {
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(TestClass::class, TEST_FILE)
         val file2 = JsonFile(TestClass::class, TEST_FILE)
-        val test = TestClass()
-        test.value1 = VALUE_1_ALT
-        test.value2 = VALUE_2_ALT
+        val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.save(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
         assertEquals(VALUE_2_ALT, file.get().value2)
@@ -157,9 +151,7 @@ class JsonFileTest {
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(MapTestClass::class, TEST_FILE)
         val file2 = JsonFile(MapTestClass::class, TEST_FILE)
-        val test = MapTestClass()
-        test.map1 = VALUE_MAP_1_ALT
-        test.map2 = VALUE_MAP_2_ALT
+        val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.set(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
         assertEquals(file.get().map2, VALUE_MAP_2_ALT)
@@ -184,9 +176,7 @@ class JsonFileTest {
         assertFalse(TEST_FILE.exists())
         val file = JsonFile(MapTestClass::class, TEST_FILE)
         val file2 = JsonFile(MapTestClass::class, TEST_FILE)
-        val test = MapTestClass()
-        test.map1 = VALUE_MAP_1_ALT
-        test.map2 = VALUE_MAP_2_ALT
+        val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.save(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
         assertEquals(VALUE_MAP_2_ALT, file.get().map2)
@@ -222,5 +212,30 @@ class JsonFileTest {
         TEST_FILE.writeText("")
         file.reload()
         assertNotEquals("", TEST_FILE.readText())
+    }
+
+    @Test
+    fun `Testing delegate get, set, and save`() {
+        TEST_FILE.delete()
+        assertFalse(TEST_FILE.exists())
+        val file = JsonFile(TestClass::class, TEST_FILE, delegateAutoSave = false)
+        var delegated by file
+        assertSame(file.get(), delegated)
+        val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
+        delegated = test
+        assertSame(file.get(), delegated)
+        assertSame(test, delegated)
+
+        val file2 = JsonFile(TestClass::class, TEST_FILE, delegateAutoSave = true)
+        assertNotEquals(test, file2.get())
+        var delegated2 by file2
+        assertSame(file2.get(), delegated2)
+        val original = TestClass()
+        delegated2 = original
+        assertSame(original, file2.get())
+        assertSame(original, delegated2)
+
+        file.reload()
+        assertEquals(original, delegated)
     }
 }
