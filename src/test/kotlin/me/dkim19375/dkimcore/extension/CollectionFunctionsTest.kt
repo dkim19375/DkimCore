@@ -33,6 +33,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -172,36 +173,34 @@ class CollectionFunctionsTest {
     @Test
     fun `Cast types of collections`() {
         val stringIterable: Iterable<*> = STRING_LIST
-        assertThrows<ClassCastException> { stringIterable.castTypeCollection(Int::class.java) }
-        assertDoesNotThrow { stringIterable.castTypeCollection(String::class.java).first() }
-        assertNull(stringIterable.castTypeCollectionSafe(Int::class.java))
-        assertEquals(STRING_LIST, stringIterable.castTypeCollectionSafe(String::class.java))
+        assertThrows<ClassCastException> { stringIterable.castCheckedCollection<Int>() }
+        assertDoesNotThrow { stringIterable.castCheckedCollection<String>().first() }
+        assertNull(stringIterable.castCheckedCollectionSafe<Int>())
+        assertSame(STRING_LIST, stringIterable.castCheckedCollectionSafe<String>())
         val stringList: List<*> = STRING_LIST
-        assertThrows<ClassCastException> { stringList.castType(Int::class.java) }
-        assertDoesNotThrow { stringList.castType(String::class.java).first() }
-        assertNull(stringList.castTypeSafe(Int::class.java))
-        assertEquals(STRING_LIST, stringList.castTypeSafe(String::class.java))
+        assertThrows<ClassCastException> { stringList.castChecked<Int>() }
+        assertDoesNotThrow { stringList.castChecked<String>().first() }
+        assertNull(stringList.castCheckedSafe<Int>())
+        assertSame(STRING_LIST, stringList.castCheckedSafe<String>())
         val stringSet: Set<*> = STRING_SET
-        assertThrows<ClassCastException> { stringSet.castType(Int::class.java) }
-        assertDoesNotThrow { stringSet.castType(String::class.java).first() }
-        assertNull(stringSet.castTypeSafe(Int::class.java))
-        assertEquals(STRING_SET, stringSet.castTypeSafe(String::class.java))
+        assertThrows<ClassCastException> { stringSet.castChecked<Int>() }
+        assertDoesNotThrow { stringSet.castChecked<String>().first() }
+        assertNull(stringSet.castCheckedSafe<Int>())
+        assertSame(STRING_SET, stringSet.castCheckedSafe<String>())
         val stringMap: Map<*, *> = STRING_MAP
-        assertThrows<ClassCastException> { stringMap.castType(Int::class.java, Int::class.java) }
-        assertDoesNotThrow {
-            stringMap.castType(String::class.java, String::class.java).entries.first()
-        }
-        assertNull(stringMap.castTypeSafe(Int::class.java, Int::class.java))
-        assertEquals(STRING_MAP, stringMap.castTypeSafe(String::class.java, String::class.java))
+        assertThrows<ClassCastException> { stringMap.castChecked<Int, Int>() }
+        assertDoesNotThrow { stringMap.castChecked<String, String>().entries.first() }
+        assertNull(stringMap.castCheckedSafe<Int, Int>())
+        assertSame(STRING_MAP, stringMap.castCheckedSafe<String, String>())
         val stringQueue: Queue<*> = STRING_QUEUE
-        assertThrows<ClassCastException> { stringQueue.castType(Int::class.java) }
-        assertDoesNotThrow { stringQueue.castType(String::class.java).first() }
-        assertNull(stringQueue.castTypeSafe(Int::class.java))
-        assertEquals(STRING_QUEUE, stringQueue.castTypeSafe(String::class.java))
+        assertThrows<ClassCastException> { stringQueue.castChecked<Int>() }
+        assertDoesNotThrow { stringQueue.castChecked<String>().first() }
+        assertNull(stringQueue.castCheckedSafe<Int>())
+        assertSame(STRING_QUEUE, stringQueue.castCheckedSafe())
         val stringDeque: Deque<*> = STRING_DEQUE
-        assertThrows<ClassCastException> { stringDeque.castType(Int::class.java) }
-        assertDoesNotThrow { stringDeque.castType(String::class.java).first() }
-        assertNull(stringDeque.castTypeSafe(Int::class.java))
-        assertEquals(STRING_DEQUE.toList(), stringDeque.castTypeSafe(String::class.java)?.toList())
+        assertThrows<ClassCastException> { stringDeque.castChecked<Int>() }
+        assertDoesNotThrow { stringDeque.castChecked<String>().first() }
+        assertNull(stringDeque.castCheckedSafe<Int>())
+        assertSame(STRING_DEQUE.toList(), stringDeque.castCheckedSafe<String>()?.toList())
     }
 }

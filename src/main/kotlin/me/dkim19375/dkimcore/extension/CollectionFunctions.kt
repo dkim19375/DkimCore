@@ -26,11 +26,11 @@ package me.dkim19375.dkimcore.extension
 
 import java.util.Collections
 import java.util.Deque
-import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
+import kotlin.reflect.jvm.jvmName
 import me.dkim19375.dkimcore.annotation.API
 
 @API fun Iterable<String>.containsIgnoreCase(find: String): Boolean = getIgnoreCase(find) != null
@@ -140,109 +140,90 @@ fun <K, V> concurrentMapOf(vararg elements: Pair<K, V>): MutableMap<K, V> =
 fun <K, V> concurrentMapOf(elements: Collection<Pair<K, V>>): MutableMap<K, V> =
     elements.toMap().toConcurrentMap()
 
-private fun <T, S : MutableCollection<T>> Iterable<*>.castType(
-    castTo: Class<T>,
-    name: String,
-    collectionInit: () -> S,
-): S {
-    if (this is Collection<*> && isEmpty()) {
-        return collectionInit()
-    }
-    val result = collectionInit()
-    for (item in this) {
-        if (castTo.isInstance(item)) {
-            result.add(castTo.cast(item))
+inline fun <reified T, C : Iterable<T>> Iterable<*>.castCheckedTo(): C {
+    for ((i, item) in withIndex()) {
+        if (item is T) {
             continue
         }
         throw ClassCastException(
-            "Item ${item?.javaClass?.name} in $name cannot be cast to ${castTo.name}"
+            "${item?.let { it::class.qualifiedName ?: it::class.jvmName }} at index $i in " +
+                "${this::class.qualifiedName ?: this::class.jvmName} cannot be cast to " +
+                (T::class.qualifiedName ?: T::class.jvmName)
         )
     }
-    return result
+    @Suppress("UNCHECKED_CAST") // checked
+    return this as C
 }
 
-private fun <T, S : MutableCollection<T>> Iterable<*>.castTypeSafe(
-    castTo: Class<T>,
-    collectionInit: () -> S,
-): S? {
-    if (this is Collection<*> && isEmpty()) {
-        return collectionInit()
-    }
-    val result = collectionInit()
+inline fun <reified T, C : Iterable<T>> Iterable<*>.castCheckedSafelyTo(): C? {
     for (item in this) {
-        if (castTo.isInstance(item)) {
-            result.add(castTo.cast(item))
-            continue
-        }
-        return null
-    }
-    return result
-}
-
-@API
-fun <T> Iterable<*>.castTypeCollection(castTo: Class<T>): Collection<T> =
-    castType(castTo, "Iterable", ::arrayListOf)
-
-@API
-fun <T> Iterable<*>.castTypeCollectionSafe(castTo: Class<T>): Collection<T>? =
-    castTypeSafe(castTo, ::arrayListOf)
-
-@API fun <T> List<*>.castType(castTo: Class<T>): List<T> = castType(castTo, "List", ::arrayListOf)
-
-@API fun <T> List<*>.castTypeSafe(castTo: Class<T>): List<T>? = castTypeSafe(castTo, ::arrayListOf)
-
-@API fun <T> Set<*>.castType(castTo: Class<T>): Set<T> = castType(castTo, "Set", ::hashSetOf)
-
-@API fun <T> Set<*>.castTypeSafe(castTo: Class<T>): Set<T>? = castTypeSafe(castTo, ::hashSetOf)
-
-@API
-fun <K, V> Map<*, *>.castType(castKeyTo: Class<K>, castValueTo: Class<V>): Map<K, V> {
-    if (isEmpty()) {
-        return hashMapOf()
-    }
-    val result = hashMapOf<K, V>()
-    for ((key, value) in this) {
-        if (!castKeyTo.isInstance(key)) {
-            throw ClassCastException(
-                "Item (key) ${key?.javaClass?.name} in Map cannot be cast to ${castKeyTo.name}"
-            )
-        }
-        if (!castValueTo.isInstance(value)) {
-            throw ClassCastException(
-                "Item (value) ${value?.javaClass?.name} in Map cannot be cast to ${castValueTo.name}"
-            )
-        }
-        result[castKeyTo.cast(key)] = castValueTo.cast(value)
-    }
-    return result
-}
-
-@API
-fun <K, V> Map<*, *>.castTypeSafe(castKeyTo: Class<K>, castValueTo: Class<V>): Map<K, V>? {
-    if (isEmpty()) {
-        return hashMapOf()
-    }
-    val result = hashMapOf<K, V>()
-    for ((key, value) in this) {
-        if (!castKeyTo.isInstance(key)) {
+        if (item !is T) {
             return null
         }
-        if (!castValueTo.isInstance(value)) {
-            return null
-        }
-        result[castKeyTo.cast(key)] = castValueTo.cast(value)
     }
-    return result
+    @Suppress("UNCHECKED_CAST") // checked
+    return this as C
 }
 
-@API fun <T> Queue<*>.castType(castTo: Class<T>): Queue<T> = castType(castTo, "Queue", ::LinkedList)
-
-@API fun <T> Queue<*>.castTypeSafe(castTo: Class<T>): Queue<T>? = castTypeSafe(castTo, ::LinkedList)
+@API inline fun <reified T> Iterable<*>.castCheckedCollection(): Collection<T> = castCheckedTo()
 
 @API
-fun <T> Deque<*>.castType(castTo: Class<T>): Deque<T> =
-    castType(castTo, "Deque") { java.util.ArrayDeque() }
+inline fun <reified T> Iterable<*>.castCheckedCollectionSafe(): Collection<T>? =
+    castCheckedSafelyTo<T, Collection<T>>()
+
+@API inline fun <reified T> List<*>.castChecked(): List<T> = castCheckedTo()
+
+@API inline fun <reified T> List<*>.castCheckedSafe(): List<T>? = castCheckedSafelyTo<T, List<T>>()
+
+@API inline fun <reified T> Set<*>.castChecked(): Set<T> = castCheckedTo()
+
+@API inline fun <reified T> Set<*>.castCheckedSafe(): Set<T>? = castCheckedSafelyTo<T, Set<T>>()
+
+inline fun <reified K, reified V, M : Map<K, V>> Map<*, *>.castCheckedTo(): M {
+    val keyName = K::class.qualifiedName ?: K::class.jvmName
+    val valueName = V::class.qualifiedName ?: V::class.jvmName
+    val thisName = this::class.qualifiedName ?: this::class.jvmName
+    for ((key, value) in this) {
+        if (key is K) {
+            if (value is V) {
+                continue
+            }
+            throw ClassCastException(
+                "${value?.let { it::class.qualifiedName ?: it::class.jvmName }} in " +
+                    "$thisName cannot be cast to $valueName"
+            )
+        }
+        throw ClassCastException(
+            "${key?.let { it::class.qualifiedName ?: it::class.jvmName }} in " +
+                "$thisName cannot be cast to $keyName"
+        )
+    }
+    @Suppress("UNCHECKED_CAST") // checked
+    return this as M
+}
+
+inline fun <reified K, reified V, M : Map<K, V>> Map<*, *>.castCheckedSafelyTo(): M? {
+    for ((key, value) in this) {
+        if (key !is K || value !is V) {
+            return null
+        }
+    }
+    @Suppress("UNCHECKED_CAST") // checked
+    return this as M
+}
+
+@API inline fun <reified K, reified V> Map<*, *>.castChecked(): Map<K, V> = castCheckedTo()
 
 @API
-fun <T> Deque<*>.castTypeSafe(castTo: Class<T>): Deque<T>? =
-    castTypeSafe(castTo) { java.util.ArrayDeque() }
+inline fun <reified K, reified V> Map<*, *>.castCheckedSafe(): Map<K, V>? =
+    castCheckedSafelyTo<K, V, Map<K, V>>()
+
+@API inline fun <reified T> Queue<*>.castChecked(): Queue<T> = castCheckedTo()
+
+@API
+inline fun <reified T> Queue<*>.castCheckedSafe(): Queue<T>? = castCheckedSafelyTo<T, Queue<T>>()
+
+@API inline fun <reified T> Deque<*>.castChecked(): Deque<T> = castCheckedTo()
+
+@API
+inline fun <reified T> Deque<*>.castCheckedSafe(): Deque<T>? = castCheckedSafelyTo<T, Deque<T>>()
