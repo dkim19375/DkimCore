@@ -24,6 +24,7 @@
 
 package me.dkim19375.dkimcore.extension
 
+import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -56,9 +57,10 @@ fun <T> getMillisLongAndValue(function: () -> T): Pair<Long, T> {
 }
 
 @API
-inline fun <reified T : Enum<T>> enumValueOfOrNull(str: String): T? = runCatchingOrNull {
-    enumValueOf<T>(str.uppercase())
-}
+inline fun <reified T : Enum<T>> enumValueOfOrNull(str: String, ignoreCase: Boolean = false): T? =
+    if (ignoreCase) {
+        enumEntries<T>().find { it.name.equals(str, ignoreCase = true) }
+    } else runCatchingOrNull { enumValueOf<T>(str) }
 
 fun <T : Any> KClass<T>.createInstance(): T {
     val noArgsConstructor =

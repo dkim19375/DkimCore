@@ -36,8 +36,8 @@ class OtherFunctionsTest {
     private class TestException : RuntimeException()
 
     private enum class TestEnum {
-        FIRST,
-        SECOND,
+        First,
+        Second,
     }
 
     @Test
@@ -74,9 +74,12 @@ class OtherFunctionsTest {
 
     @Test
     fun `Enum Value of or Null`() {
-        assertEquals(TestEnum.FIRST, enumValueOfOrNull(TestEnum.FIRST.name))
-        assertEquals(TestEnum.SECOND, enumValueOfOrNull(TestEnum.SECOND.name.lowercase()))
+        assertEquals(TestEnum.First, enumValueOfOrNull(TestEnum.First.name))
+        assertEquals(
+            TestEnum.Second,
+            enumValueOfOrNull(TestEnum.Second.name.lowercase(), ignoreCase = true),
+        )
+        assertNull(enumValueOfOrNull<TestEnum>(TestEnum.Second.name.lowercase()))
         assertNull(enumValueOfOrNull<TestEnum>("Test"))
-        assertNull(enumValueOfOrNull<TestEnum>("FIRSTa"))
     }
 }
