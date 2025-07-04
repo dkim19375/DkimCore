@@ -36,6 +36,9 @@ private const val FULL_DOUBLE = FIFTH_DOUBLE * 5
 private const val FIFTH_PERCENT_LONG = 100L / 5
 private const val FIFTH_PERCENT_DOUBLE = FIFTH_PERCENT_LONG.toDouble()
 
+private const val NEEDED_DECIMAL = 1.5
+private const val REDUNDANT_DECIMAL = 2.0
+
 @Suppress("SpellCheckingInspection")
 private val NUMERAL_MAP =
     mapOf(
@@ -84,6 +87,7 @@ class PrimitiveFunctionsTest {
                         "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}",
             )
         }
+        assertEquals(BEFORE_FLOAT, BEFORE_FLOAT.setDecimalPlaces(Int.MAX_VALUE))
     }
 
     @Test
@@ -101,6 +105,7 @@ class PrimitiveFunctionsTest {
                         "Expected (ends with): ${test + if (test >= 3 && test != last) 2 else 1}",
             )
         }
+        assertEquals(BEFORE, BEFORE.setDecimalPlaces(Int.MAX_VALUE))
     }
 
     @Test
@@ -116,5 +121,21 @@ class PrimitiveFunctionsTest {
         }
         assertEquals("3000", 3000.toRomanNumeral(2999))
         assertNotEquals("3000", 3000.toRomanNumeral(3000))
+    }
+
+    @Test
+    fun `Remove redundant decimal`() {
+        assertEquals(NEEDED_DECIMAL, NEEDED_DECIMAL.removeRedundantDecimal())
+        assertIs<Double>(NEEDED_DECIMAL.removeRedundantDecimal())
+        assertEquals(REDUNDANT_DECIMAL, REDUNDANT_DECIMAL.removeRedundantDecimal().toDouble())
+        assertIs<Long>(REDUNDANT_DECIMAL.removeRedundantDecimal())
+    }
+
+    @Test
+    fun `Format with suffix`() {
+        assertEquals("1.23K", 1_234.formatWithSuffix(2))
+        assertEquals("1.234567M", 1_234_567.formatWithSuffix(6))
+        assertEquals("3B", 2_987_654_321.formatWithSuffix(0))
+        assertEquals("4.567890123456T", 4_567_890_123_456.formatWithSuffix())
     }
 }

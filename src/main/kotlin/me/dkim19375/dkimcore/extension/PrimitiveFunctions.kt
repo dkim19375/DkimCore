@@ -30,12 +30,12 @@ import kotlin.math.roundToLong
 import me.dkim19375.dkimcore.annotation.API
 
 fun Float.setDecimalPlaces(amount: Int?): Float {
-    amount ?: return this
+    amount?.takeIf { amount < Int.MAX_VALUE } ?: return this
     return 10f.pow(amount).let { pow -> (this * pow).roundToLong() / pow }
 }
 
 fun Double.setDecimalPlaces(amount: Int?): Double {
-    amount ?: return this
+    amount?.takeIf { amount < Int.MAX_VALUE } ?: return this
     return 10.0.pow(amount).let { pow -> (this * pow).roundToLong() / pow }
 }
 
@@ -71,4 +71,22 @@ fun Int.toRomanNumeral(limit: Int = 3999): String {
         return romanNumeralMap[num] ?: "0"
     }
     return romanNumeralMap[num] + (this - num).toRomanNumeral()
+}
+
+fun Double.removeRedundantDecimal(): Number = if (this % 1.0 == 0.0) this.toLong() else this
+
+private val suffixes =
+    listOf(1_000_000_000_000L to 'T', 1_000_000_000L to 'B', 1_000_000L to 'M', 1_000L to 'K')
+
+fun Number.formatWithSuffix(decimalPlaces: Int = Int.MAX_VALUE): String {
+    val double = toDouble()
+    for ((value, suffix) in suffixes) {
+        if (double < value) {
+            continue
+        }
+        return "${
+            (double / value).setDecimalPlaces(decimalPlaces).removeRedundantDecimal()
+        }$suffix"
+    }
+    return double.removeRedundantDecimal().toString()
 }
