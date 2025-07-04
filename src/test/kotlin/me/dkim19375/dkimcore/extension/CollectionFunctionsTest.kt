@@ -31,18 +31,19 @@ import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 
 private val STRING_LIST: List<String> = listOf("a", "B", "c")
 private val STRING_SET: Set<String> = setOf("a", "b", "c")
 private val STRING_MAP: Map<String, String> = mapOf("a" to "b", "c" to "d")
 private val STRING_QUEUE: Queue<String> = LinkedList(listOf("A", "b", "c"))
 private val STRING_DEQUE: Deque<String> = java.util.ArrayDeque(listOf("A", "b", "c"))
+private val STRING_PAIRS: Set<Pair<String, String>> = setOf("a" to "b", "c" to "d")
 private val UUID_LIST: List<UUID> = (1..10).map { UUID.randomUUID() }
 private val MAP_LIST: List<Map<Int, Int>> = listOf(mapOf(1 to 2, 3 to 4), mapOf(5 to 6, 7 to 8))
 private val EXPECTED_MAP: Map<Int, Int> = mapOf(1 to 2, 3 to 4, 5 to 6, 7 to 8)
@@ -95,42 +96,42 @@ class CollectionFunctionsTest {
 
     @Test
     fun `Immutable set`() {
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (STRING_SET.toImmutableSet() as MutableSet<String>).add("d")
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableSetOf("a") as MutableSet<String>).add("b")
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableSetOf(setOf("a")) as MutableSet<String>).add("b")
         }
     }
 
     @Test
     fun `Immutable list`() {
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (STRING_LIST.toImmutableList() as MutableList<String>).add("d")
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableListOf("a") as MutableList<String>).add("b")
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableListOf(listOf("a")) as MutableList<String>).add("b")
         }
     }
 
     @Test
     fun `Immutable map`() {
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (STRING_MAP.toImmutableMap() as MutableMap<String, String>)["e"] = "f"
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableMapOf("a" to "b") as MutableMap<String, String>)["c"] = "d"
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (immutableMapOf(listOf("a" to "b")) as MutableMap<String, String>)["c"] = "d"
         }
-        assertThrows<UnsupportedOperationException> {
+        assertFailsWith<UnsupportedOperationException> {
             (listOf("a" to "b").toImmutableMap() as MutableMap<String, String>)["c"] = "d"
         }
     }
@@ -173,32 +174,32 @@ class CollectionFunctionsTest {
     @Test
     fun `Cast types of collections`() {
         val stringIterable: Iterable<*> = STRING_LIST
-        assertThrows<ClassCastException> { stringIterable.castCheckedCollection<Int>() }
+        assertFailsWith<ClassCastException> { stringIterable.castCheckedCollection<Int>() }
         assertDoesNotThrow { stringIterable.castCheckedCollection<String>().first() }
         assertNull(stringIterable.castCheckedCollectionSafe<Int>())
         assertSame(STRING_LIST, stringIterable.castCheckedCollectionSafe<String>())
         val stringList: List<*> = STRING_LIST
-        assertThrows<ClassCastException> { stringList.castChecked<Int>() }
+        assertFailsWith<ClassCastException> { stringList.castChecked<Int>() }
         assertDoesNotThrow { stringList.castChecked<String>().first() }
         assertNull(stringList.castCheckedSafe<Int>())
         assertSame(STRING_LIST, stringList.castCheckedSafe<String>())
         val stringSet: Set<*> = STRING_SET
-        assertThrows<ClassCastException> { stringSet.castChecked<Int>() }
+        assertFailsWith<ClassCastException> { stringSet.castChecked<Int>() }
         assertDoesNotThrow { stringSet.castChecked<String>().first() }
         assertNull(stringSet.castCheckedSafe<Int>())
         assertSame(STRING_SET, stringSet.castCheckedSafe<String>())
         val stringMap: Map<*, *> = STRING_MAP
-        assertThrows<ClassCastException> { stringMap.castChecked<Int, Int>() }
+        assertFailsWith<ClassCastException> { stringMap.castChecked<Int, Int>() }
         assertDoesNotThrow { stringMap.castChecked<String, String>().entries.first() }
         assertNull(stringMap.castCheckedSafe<Int, Int>())
         assertSame(STRING_MAP, stringMap.castCheckedSafe<String, String>())
         val stringQueue: Queue<*> = STRING_QUEUE
-        assertThrows<ClassCastException> { stringQueue.castChecked<Int>() }
+        assertFailsWith<ClassCastException> { stringQueue.castChecked<Int>() }
         assertDoesNotThrow { stringQueue.castChecked<String>().first() }
         assertNull(stringQueue.castCheckedSafe<Int>())
         assertSame(STRING_QUEUE, stringQueue.castCheckedSafe())
         val stringDeque: Deque<*> = STRING_DEQUE
-        assertThrows<ClassCastException> { stringDeque.castChecked<Int>() }
+        assertFailsWith<ClassCastException> { stringDeque.castChecked<Int>() }
         assertDoesNotThrow { stringDeque.castChecked<String>().first() }
         assertNull(stringDeque.castCheckedSafe<Int>())
         assertSame(STRING_DEQUE, stringDeque.castCheckedSafe<String>())
