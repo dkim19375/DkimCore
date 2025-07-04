@@ -46,11 +46,12 @@ class WeightedRandomPicker<T>(items: Collection<Pair<T, Number>>) {
             throw NoItemsException()
         }
         if (items.size == 1) {
+            val lastItem = items.first().first
             if (removeResult) {
                 items.clear()
                 total = 0.0
             }
-            return items.first().first
+            return lastItem
         }
         val randomNum = Random.nextDouble() * total
         var current = 0.0

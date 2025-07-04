@@ -50,12 +50,22 @@ class WeightedRandomPickerTest {
     }
 
     @Test
-    fun `Removes item after picking`() {
+    fun `Removes item after picking and returns it`() {
         val picker = getPicker()
         assertEquals(3, picker.getRemainingItems().size)
-        val picked = picker.pickItem(removeResult = true)
+
+        val picked1 = picker.pickItem(removeResult = true)
         assertEquals(2, picker.getRemainingItems().size)
-        assertTrue(picker.getRemainingItems().none { it.first == picked })
+        assertTrue(picker.getRemainingItems().none { it.first == picked1 })
+
+        val picked2 = picker.pickItem(removeResult = true)
+        assertEquals(1, picker.getRemainingItems().size)
+        assertTrue(picker.getRemainingItems().none { it.first == picked2 })
+        val last = picker.getRemainingItems().first().first
+
+        val picked3 = picker.pickItem(removeResult = true)
+        assertTrue(picker.getRemainingItems().isEmpty())
+        assertEquals(last, picked3)
     }
 
     @Test

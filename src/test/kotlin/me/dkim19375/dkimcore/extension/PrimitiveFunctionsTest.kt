@@ -73,6 +73,12 @@ private val NUMERAL_MAP =
 
 class PrimitiveFunctionsTest {
     @Test
+    fun `Percent chance extremes`() {
+        assertFalse(0.0.percentChance())
+        assertTrue(100.0.percentChance())
+    }
+
+    @Test
     fun `Float decimal places`() {
         val last = BEFORE_FLOAT.toString().last().digitToInt() - 1
         for (test in 1 until last + 1) {
@@ -133,6 +139,8 @@ class PrimitiveFunctionsTest {
 
     @Test
     fun `Format with suffix`() {
+        assertEquals("123.46", 123.456.formatWithSuffix(2))
+        assertEquals("123", 123.456.formatWithSuffix(0))
         assertEquals("1.23K", 1_234.formatWithSuffix(2))
         assertEquals("1.234567M", 1_234_567.formatWithSuffix(6))
         assertEquals("3B", 2_987_654_321.formatWithSuffix(0))

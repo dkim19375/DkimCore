@@ -75,6 +75,7 @@ class CollectionFunctionsTest {
 
         assertEquals("b", STRING_MAP["a", true])
         assertEquals("d", STRING_MAP["C", true])
+        @Suppress("ReplaceGetOrSet") assertEquals("d", STRING_MAP.get("C", true))
         assertNull(STRING_MAP["C", false])
         assertNull(STRING_MAP["d", false])
     }
@@ -139,24 +140,36 @@ class CollectionFunctionsTest {
     @Test
     fun `Concurrent set`() = assertDoesNotThrow {
         val set = concurrentSetOf(1, 2, 3)
-        for (i in set) {
+        for (i in setOf(1, 2, 3)) {
             set.remove(i)
+        }
+        val set2 = concurrentSetOf(setOf(1, 2, 3))
+        for (i in setOf(1, 2, 3)) {
+            set2.remove(i)
         }
     }
 
     @Test
     fun `Concurrent Deque`() = assertDoesNotThrow {
-        val deque = listOf(1, 2, 3).toConcurrentDeque()
-        for (i in deque) {
+        val deque = concurrentDequeOf(1, 2, 3)
+        for (i in listOf(1, 2, 3)) {
             deque.remove(i)
+        }
+        val deque2 = concurrentDequeOf(listOf(1, 2, 3))
+        for (i in listOf(1, 2, 3)) {
+            deque2.remove(i)
         }
     }
 
     @Test
     fun `Concurrent map`() = assertDoesNotThrow {
         val map = mapOf(1 to 2, 3 to 4, 5 to 6).toConcurrentMap()
-        for (i in map) {
+        for (i in mapOf(1 to 2, 3 to 4, 5 to 6)) {
             map.remove(i.key)
+        }
+        val map2 = listOf(1 to 2, 3 to 4, 5 to 6).toConcurrentMap()
+        for (i in listOf(1 to 2, 3 to 4, 5 to 6)) {
+            map2.remove(i.first)
         }
     }
 
@@ -190,6 +203,8 @@ class CollectionFunctionsTest {
         assertSame(STRING_SET, stringSet.castCheckedSafe<String>())
         val stringMap: Map<*, *> = STRING_MAP
         assertFailsWith<ClassCastException> { stringMap.castChecked<Int, Int>() }
+        assertFailsWith<ClassCastException> { stringMap.castChecked<Int, String>() }
+        assertFailsWith<ClassCastException> { stringMap.castChecked<String, Int>() }
         assertDoesNotThrow { stringMap.castChecked<String, String>().entries.first() }
         assertNull(stringMap.castCheckedSafe<Int, Int>())
         assertSame(STRING_MAP, stringMap.castCheckedSafe<String, String>())

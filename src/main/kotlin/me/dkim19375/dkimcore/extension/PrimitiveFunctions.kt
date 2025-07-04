@@ -88,5 +88,5 @@ fun Number.formatWithSuffix(decimalPlaces: Int = Int.MAX_VALUE): String {
             (double / value).setDecimalPlaces(decimalPlaces).removeRedundantDecimal()
         }$suffix"
     }
-    return double.removeRedundantDecimal().toString()
+    return double.setDecimalPlaces(decimalPlaces).removeRedundantDecimal().toString()
 }

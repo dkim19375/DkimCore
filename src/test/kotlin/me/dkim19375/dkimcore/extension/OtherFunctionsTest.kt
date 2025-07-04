@@ -41,6 +41,12 @@ class OtherFunctionsTest {
     }
 
     @Test
+    fun `Typed null`() {
+        val str: String? = typedNull<String>()
+        assertNull(str)
+    }
+
+    @Test
     fun `Run catching or null`() {
         assertNull(runCatchingOrNull { throw TestException() })
         assertEquals("abc", runCatchingOrNull { "abc" })
