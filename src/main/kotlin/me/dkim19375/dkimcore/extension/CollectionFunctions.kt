@@ -227,3 +227,10 @@ inline fun <reified T> Queue<*>.castCheckedSafe(): Queue<T>? = castCheckedSafely
 
 @API
 inline fun <reified T> Deque<*>.castCheckedSafe(): Deque<T>? = castCheckedSafelyTo<T, Deque<T>>()
+
+fun <K, V> Map<K, V>.pairsCopy(): Set<Pair<K, V>> =
+    buildSet(size) {
+        for ((k, v) in this@pairsCopy) {
+            add(k to v)
+        }
+    }

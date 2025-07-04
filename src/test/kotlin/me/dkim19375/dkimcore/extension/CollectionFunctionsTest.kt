@@ -205,4 +205,13 @@ class CollectionFunctionsTest {
         assertSame(STRING_DEQUE, stringDeque.castCheckedSafe<String>())
         assertEquals(STRING_DEQUE.toList(), stringDeque.castCheckedSafe<String>()?.toList())
     }
+
+    @Test
+    fun `Map to pairs set`() {
+        val map = STRING_MAP.toMutableMap()
+        val pairs = map.pairsCopy()
+        assertEquals(STRING_PAIRS, pairs)
+        map.clear()
+        assertTrue(pairs.isNotEmpty())
+    }
 }
