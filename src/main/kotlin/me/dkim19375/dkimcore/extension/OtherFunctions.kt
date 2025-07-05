@@ -76,3 +76,12 @@ fun <T : Any> KClass<T>.createInstance(): T {
 
     return noArgsConstructor.single().apply { isAccessible = true }.callBy(emptyMap())
 }
+
+inline fun <reified A, reified B> Pair<*, *>.castChecked(): Pair<A, B> =
+    (first as A) to (second as B)
+
+inline fun <reified A, reified B> Pair<*, *>.castCheckedSafe(): Pair<A, B>? {
+    val first = this.first as? A ?: return null
+    val second = this.second as? B ?: return null
+    return first to second
+}
