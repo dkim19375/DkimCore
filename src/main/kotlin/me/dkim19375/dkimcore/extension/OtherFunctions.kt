@@ -36,7 +36,7 @@ import me.dkim19375.dkimcore.annotation.API
 fun <T> runCatchingOrNull(action: () -> T?): T? =
     try {
         action()
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         null
     }
 
