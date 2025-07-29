@@ -22,7 +22,16 @@ plugins {
 group = "me.dkim19375"
 version = "1.6.1"
 
-setupJava(javaVersion = JavaVersion.VERSION_11)
+setupJava(javaVersion = JavaVersion.VERSION_11, setupSpotless = false)
+
+spotless {
+    kotlin {
+        ktfmt().kotlinlangStyle().configure {
+            it.setManageTrailingCommas(true)
+            it.setRemoveUnusedImports(true)
+        }
+    }
+}
 
 repositories {
     mavenCentral()
