@@ -1,5 +1,5 @@
 [versions]
-commons-io = "2.20.0"
+commons-io = "2.21.0"
 commons-lang3 = "3.19.0"
 commons-text = "1.14.0"
 dkim-gradle = "1.4.8"
