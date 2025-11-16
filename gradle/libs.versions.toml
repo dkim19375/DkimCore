@@ -1,6 +1,6 @@
 [versions]
 commons-io = "2.21.0"
-commons-lang3 = "3.19.0"
+commons-lang3 = "3.20.0"
 commons-text = "1.14.0"
 dkim-gradle = "1.4.8"
 dokkatoo = "2.4.0"
