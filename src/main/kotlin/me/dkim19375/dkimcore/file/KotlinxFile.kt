@@ -25,6 +25,7 @@
 package me.dkim19375.dkimcore.file
 
 import java.io.File
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
@@ -40,8 +41,9 @@ open class KotlinxFile<T : Any>(
     private val serializationStrategy: SerializationStrategy<T> = serializer,
     private val deserializationStrategy: DeserializationStrategy<T> = serializer,
     delegateAutoSave: Boolean = true,
+    ioCoroutineContext: CoroutineContext? = null,
     default: () -> T = type::createInstance,
-) : ObjectDataFile<T>(file, type, default, delegateAutoSave) {
+) : ObjectDataFile<T>(file, type, default, delegateAutoSave, ioCoroutineContext) {
     init {
         super.reload()
         super.save()

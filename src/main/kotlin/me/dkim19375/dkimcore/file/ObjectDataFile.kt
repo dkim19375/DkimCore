@@ -25,10 +25,14 @@
 package me.dkim19375.dkimcore.file
 
 import java.io.File
+import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.writeText
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import me.dkim19375.dkimcore.exception.ConfigurationException
 import me.dkim19375.dkimcore.extension.atomicReference
 import me.dkim19375.dkimcore.extension.createInstance
@@ -38,7 +42,10 @@ abstract class ObjectDataFile<T : Any>(
     protected val type: KClass<T>,
     protected val default: () -> T = type::createInstance,
     protected val delegateAutoSave: Boolean = true,
+    protected val ioCoroutineContext: CoroutineContext? = null,
 ) : DataFile(file), ReadWriteProperty<Any?, T> {
+    private var coroutineScope by
+        atomicReference<CoroutineScope?>(ioCoroutineContext?.let(::CoroutineScope))
 
     private var current by atomicReference(default())
     private var readError by atomicReference<Throwable?>()
@@ -51,23 +58,25 @@ abstract class ObjectDataFile<T : Any>(
 
     @Synchronized
     override fun reload() {
-        super.reload()
-        runCatching {
-                current =
-                    file.readText().let { text ->
-                        if (text.isBlank()) default() else deserialize(text)
-                    }
-            }
-            .getOrElse {
-                readError = it
-                throw ConfigurationException(
-                    "An error has occurred while trying to read and deserialize the file '${
-                    file.path
-                }'",
-                    it,
-                )
-            }
-        readError = null
+        runIO {
+            super.reload()
+            runCatching {
+                    current =
+                        file.readText().let { text ->
+                            if (text.isBlank()) default() else deserialize(text)
+                        }
+                }
+                .getOrElse {
+                    readError = it
+                    throw ConfigurationException(
+                        "An error has occurred while trying to read and deserialize the file '${
+                            file.path
+                        }'",
+                        it,
+                    )
+                }
+            readError = null
+        }
         save()
     }
 
@@ -79,7 +88,6 @@ abstract class ObjectDataFile<T : Any>(
 
     @Synchronized
     override fun save() {
-        super.save()
         if (readError != null) {
             throw ConfigurationException(
                 "Not saving file due to an error when reading and deserializing the file '${
@@ -88,7 +96,24 @@ abstract class ObjectDataFile<T : Any>(
                 readError,
             )
         }
-        path.writeText(serialize(current))
+        val serialized = serialize(current)
+        runIO {
+            super.save()
+            path.writeText(serialized)
+        }
+    }
+
+    private fun runIO(block: () -> Unit) {
+        var scope = coroutineScope
+        if (scope == null) {
+            block()
+            return
+        }
+        if (!scope.isActive) {
+            scope = ioCoroutineContext?.let(::CoroutineScope)
+            coroutineScope = scope
+        }
+        scope?.launch { block() } ?: block()
     }
 
     protected abstract fun deserialize(text: String): T

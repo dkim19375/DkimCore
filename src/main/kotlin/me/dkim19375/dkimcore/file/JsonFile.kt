@@ -27,6 +27,7 @@ package me.dkim19375.dkimcore.file
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.File
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 import me.dkim19375.dkimcore.annotation.API
 import me.dkim19375.dkimcore.extension.createInstance
@@ -54,7 +55,8 @@ open class JsonFile<T : Any>(
             }
             .create(),
     delegateAutoSave: Boolean = true,
-) : ObjectDataFile<T>(file, type, default, delegateAutoSave) {
+    ioCoroutineContext: CoroutineContext? = null,
+) : ObjectDataFile<T>(file, type, default, delegateAutoSave, ioCoroutineContext) {
     init {
         super.reload()
         super.save()
