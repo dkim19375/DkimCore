@@ -42,8 +42,17 @@ open class KotlinxFile<T : Any>(
     private val deserializationStrategy: DeserializationStrategy<T> = serializer,
     delegateAutoSave: Boolean = true,
     ioCoroutineContext: CoroutineContext? = null,
+    forceIOCoroutineContext: Boolean = false,
     default: () -> T = type::createInstance,
-) : ObjectDataFile<T>(file, type, default, delegateAutoSave, ioCoroutineContext) {
+) :
+    ObjectDataFile<T>(
+        file,
+        type,
+        default,
+        delegateAutoSave,
+        ioCoroutineContext,
+        forceIOCoroutineContext,
+    ) {
     init {
         super.reload()
         super.save()

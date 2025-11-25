@@ -56,7 +56,16 @@ open class JsonFile<T : Any>(
             .create(),
     delegateAutoSave: Boolean = true,
     ioCoroutineContext: CoroutineContext? = null,
-) : ObjectDataFile<T>(file, type, default, delegateAutoSave, ioCoroutineContext) {
+    forceIOCoroutineContext: Boolean = false,
+) :
+    ObjectDataFile<T>(
+        file,
+        type,
+        default,
+        delegateAutoSave,
+        ioCoroutineContext,
+        forceIOCoroutineContext,
+    ) {
     init {
         super.reload()
         super.save()
