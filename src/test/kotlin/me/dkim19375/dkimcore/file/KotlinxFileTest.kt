@@ -66,14 +66,27 @@ class KotlinxFileTest {
     fun `Automatic file creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        KotlinxFile(
+            TestClass::class,
+            Yaml.default,
+            TestClass.serializer(),
+            TEST_FILE,
+            ioCoroutineContext = null,
+        )
         assertTrue(TEST_FILE.exists())
     }
 
     @Test
     fun `File creation on save`() {
         TEST_FILE.delete()
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.save()
@@ -83,7 +96,14 @@ class KotlinxFileTest {
     @Test
     fun `File creation on reload`() {
         TEST_FILE.delete()
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.reload()
@@ -94,7 +114,14 @@ class KotlinxFileTest {
     fun `Automatic instance creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         assertEquals(VALUE_1, file.get().value1)
         assertEquals(VALUE_2, file.get().value2)
     }
@@ -103,8 +130,22 @@ class KotlinxFileTest {
     fun `Testing reload and set`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
-        val file2 = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
+        val file2 =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.set(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
@@ -128,8 +169,22 @@ class KotlinxFileTest {
     fun `Testing set & save`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
-        val file2 = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
+        val file2 =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.save(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
@@ -146,7 +201,13 @@ class KotlinxFileTest {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         val file =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         assertEquals(VALUE_MAP_1, file.get().map1)
         assertEquals(VALUE_MAP_2, file.get().map2)
     }
@@ -156,9 +217,21 @@ class KotlinxFileTest {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         val file =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val file2 =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.set(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -183,9 +256,21 @@ class KotlinxFileTest {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         val file =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val file2 =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.save(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -205,11 +290,23 @@ class KotlinxFileTest {
         TEST_FILE.writeText(INVALID_DATA)
         assertEquals(INVALID_DATA, TEST_FILE.readText())
         assertFailsWith<ConfigurationException> {
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         }
         TEST_FILE.writeText("")
         val file =
-            KotlinxFile(MapTestClass::class, Yaml.default, MapTestClass.serializer(), TEST_FILE)
+            KotlinxFile(
+                MapTestClass::class,
+                Yaml.default,
+                MapTestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         TEST_FILE.writeText(INVALID_DATA)
         assertEquals(INVALID_DATA, TEST_FILE.readText())
         assertFailsWith<ConfigurationException> { file.reload() }
@@ -221,7 +318,14 @@ class KotlinxFileTest {
     fun `Testing file saving on reload`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = KotlinxFile(TestClass::class, Yaml.default, TestClass.serializer(), TEST_FILE)
+        val file =
+            KotlinxFile(
+                TestClass::class,
+                Yaml.default,
+                TestClass.serializer(),
+                TEST_FILE,
+                ioCoroutineContext = null,
+            )
         TEST_FILE.writeText("")
         file.reload()
         assertNotEquals("", TEST_FILE.readText())

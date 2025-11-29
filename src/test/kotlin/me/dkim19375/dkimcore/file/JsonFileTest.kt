@@ -63,13 +63,13 @@ class JsonFileTest {
     fun `Automatic file creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        JsonFile(TestClass::class, TEST_FILE)
+        JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         assertTrue(TEST_FILE.exists())
     }
 
     @Test
     fun `File creation on save`() {
-        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.save()
@@ -78,7 +78,7 @@ class JsonFileTest {
 
     @Test
     fun `File creation on reload`() {
-        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
         file.reload()
@@ -89,7 +89,7 @@ class JsonFileTest {
     fun `Automatic instance creation`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         assertEquals(VALUE_1, file.get().value1)
         assertEquals(VALUE_2, file.get().value2)
     }
@@ -98,8 +98,8 @@ class JsonFileTest {
     fun `Testing reload and set`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE)
-        val file2 = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
+        val file2 = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.set(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
@@ -123,8 +123,8 @@ class JsonFileTest {
     fun `Testing set & save`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE)
-        val file2 = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
+        val file2 = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
         file.save(test)
         assertEquals(VALUE_1_ALT, file.get().value1)
@@ -140,7 +140,7 @@ class JsonFileTest {
     fun `Automatic instance creation for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(MapTestClass::class, TEST_FILE)
+        val file = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
         assertEquals(VALUE_MAP_1, file.get().map1)
         assertEquals(VALUE_MAP_2, file.get().map2)
     }
@@ -149,8 +149,8 @@ class JsonFileTest {
     fun `Testing reload and set for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(MapTestClass::class, TEST_FILE)
-        val file2 = JsonFile(MapTestClass::class, TEST_FILE)
+        val file = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
+        val file2 = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.set(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -174,8 +174,8 @@ class JsonFileTest {
     fun `Testing set & save for maps`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(MapTestClass::class, TEST_FILE)
-        val file2 = JsonFile(MapTestClass::class, TEST_FILE)
+        val file = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
+        val file2 = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
         val test = MapTestClass(VALUE_MAP_1_ALT, VALUE_MAP_2_ALT)
         file.save(test)
         assertEquals(VALUE_MAP_1_ALT, file.get().map1)
@@ -194,9 +194,11 @@ class JsonFileTest {
         TEST_FILE.createFileAndDirs()
         TEST_FILE.writeText(INVALID_DATA)
         assertEquals(INVALID_DATA, TEST_FILE.readText())
-        assertFailsWith<ConfigurationException> { JsonFile(MapTestClass::class, TEST_FILE) }
+        assertFailsWith<ConfigurationException> {
+            JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
+        }
         TEST_FILE.writeText("")
-        val file = JsonFile(MapTestClass::class, TEST_FILE)
+        val file = JsonFile(MapTestClass::class, TEST_FILE, ioCoroutineContext = null)
         TEST_FILE.writeText(INVALID_DATA)
         assertEquals(INVALID_DATA, TEST_FILE.readText())
         assertFailsWith<ConfigurationException> { file.reload() }
@@ -208,7 +210,7 @@ class JsonFileTest {
     fun `Testing file saving on reload`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE)
+        val file = JsonFile(TestClass::class, TEST_FILE, ioCoroutineContext = null)
         TEST_FILE.writeText("")
         file.reload()
         assertNotEquals("", TEST_FILE.readText())
@@ -218,7 +220,13 @@ class JsonFileTest {
     fun `Testing delegate get, set, and save`() {
         TEST_FILE.delete()
         assertFalse(TEST_FILE.exists())
-        val file = JsonFile(TestClass::class, TEST_FILE, delegateAutoSave = false)
+        val file =
+            JsonFile(
+                TestClass::class,
+                TEST_FILE,
+                delegateAutoSave = false,
+                ioCoroutineContext = null,
+            )
         var delegated by file
         assertSame(file.get(), delegated)
         val test = TestClass(VALUE_1_ALT, VALUE_2_ALT)
@@ -226,7 +234,13 @@ class JsonFileTest {
         assertSame(file.get(), delegated)
         assertSame(test, delegated)
 
-        val file2 = JsonFile(TestClass::class, TEST_FILE, delegateAutoSave = true)
+        val file2 =
+            JsonFile(
+                TestClass::class,
+                TEST_FILE,
+                delegateAutoSave = true,
+                ioCoroutineContext = null,
+            )
         assertNotEquals(test, file2.get())
         var delegated2 by file2
         assertSame(file2.get(), delegated2)
