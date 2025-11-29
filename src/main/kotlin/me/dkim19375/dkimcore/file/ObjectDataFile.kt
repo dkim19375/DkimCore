@@ -32,6 +32,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -45,7 +46,7 @@ abstract class ObjectDataFile<T : Any>(
     protected val type: KClass<T>,
     protected val default: () -> T = type::createInstance,
     protected val delegateAutoSave: Boolean = true,
-    protected val ioCoroutineContext: CoroutineContext? = null,
+    protected val ioCoroutineContext: CoroutineContext? = Dispatchers.IO,
     protected val forceIOCoroutineContext: Boolean = false,
 ) : DataFile(file), ReadWriteProperty<Any?, T> {
     private val coroutineScope = ioCoroutineContext?.let { CoroutineScope(it + SupervisorJob()) }

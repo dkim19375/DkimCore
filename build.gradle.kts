@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "me.dkim19375"
-version = "1.6.3"
+version = "1.6.4"
 
 setupJava(javaVersion = JavaVersion.VERSION_11, setupSpotless = false)
 

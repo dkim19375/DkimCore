@@ -24,6 +24,7 @@
 
 package me.dkim19375.dkimcore.file
 
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
@@ -41,7 +42,7 @@ open class KotlinxFile<T : Any>(
     private val serializationStrategy: SerializationStrategy<T> = serializer,
     private val deserializationStrategy: DeserializationStrategy<T> = serializer,
     delegateAutoSave: Boolean = true,
-    ioCoroutineContext: CoroutineContext? = null,
+    ioCoroutineContext: CoroutineContext? = Dispatchers.IO,
     forceIOCoroutineContext: Boolean = false,
     default: () -> T = type::createInstance,
 ) :
