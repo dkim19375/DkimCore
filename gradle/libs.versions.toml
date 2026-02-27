@@ -12,7 +12,7 @@ kotlinx-coroutines = "1.10.2"
 licenser = "0.6.1"
 mockito-kotlin = "6.2.3"
 nexus-publish-plugin = "2.0.0"
-spotless = "7.2.1"
+spotless = "8.2.1"
 triumph-config = "1.0.5-SNAPSHOT"
 
 [libraries]
